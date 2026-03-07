@@ -1,0 +1,31 @@
+{
+  "name": "taw-kamil-kawa",
+  "version": "1.0.0",
+  "description": "SportReserve to aplikacja internetowa umożliwiająca użytkownikom przeglądanie dostępnych obiektów sportowych oraz dokonywanie rezerwacji on-line na wybrane terminy. System wspiera podział na role i zastępuje tradycyjne metody rezerwacji.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TAW-26/TAW-Kamil-Kawa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TAW-26/TAW-Kamil-Kawa/issues"
+  },
+  "homepage": "https://github.com/TAW-26/TAW-Kamil-Kawa#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "pg": "^8.20.0"
+  }
+}
