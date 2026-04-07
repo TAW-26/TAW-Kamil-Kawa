@@ -37,7 +37,6 @@ TAW-Kamil-Kawa/
 * [Przypadki użycia systemu (Use Cases)](docs/use-cases.md)
 * [Diagram Bazy Danych (ERD)](docs/ERD.png)
 * [Dokumentacja API](docs/api.md)
-* [Instrukcja testowania w Postmanie](docs/postman-testing-guide.md)
 
 ## Instrukcja uruchomienia
 
