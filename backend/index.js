@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const errorHandler = require('./middleware/errorHandler');
+const { initializeDatabase } = require('./config/db');
 
 const authRoutes = require('./routes/auth');
 const categoryRoutes = require('./routes/categories');
@@ -40,10 +41,17 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Serwer SportReserve działa na porcie ${PORT}`);
-    console.log(`Otwórz: http://localhost:${PORT}`);
-  });
+  initializeDatabase()
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`Serwer SportReserve działa na porcie ${PORT}`);
+        console.log(`Otwórz: http://localhost:${PORT}`);
+      });
+    })
+    .catch((err) => {
+      console.error('Nie udało się uruchomić serwera:', err.message);
+      process.exit(1);
+    });
 }
 
 module.exports = app;
