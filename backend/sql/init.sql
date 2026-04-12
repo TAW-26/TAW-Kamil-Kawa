@@ -22,9 +22,12 @@ CREATE TABLE IF NOT EXISTS facilities (
     description TEXT,
     location VARCHAR(300),
     price_per_hour DECIMAL(10, 2) NOT NULL,
+    image_url TEXT,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE facilities ADD COLUMN IF NOT EXISTS image_url TEXT;
 
 CREATE TABLE IF NOT EXISTS reservations (
     id SERIAL PRIMARY KEY,

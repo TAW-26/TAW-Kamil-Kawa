@@ -53,16 +53,16 @@ const getById = async (req, res, next) => {
 // POST /api/facilities - Dodanie nowego obiektu (tylko admin)
 const create = async (req, res, next) => {
   try {
-    const { category_id, name, description, location, price_per_hour } = req.body;
+    const { category_id, name, description, location, price_per_hour, image_url } = req.body;
 
     if (!name || !price_per_hour) {
       return res.status(400).json({ error: 'Nazwa i cena za godzinę są wymagane' });
     }
 
     const result = await pool.query(
-      `INSERT INTO facilities (category_id, name, description, location, price_per_hour)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [category_id || null, name, description || null, location || null, price_per_hour]
+      `INSERT INTO facilities (category_id, name, description, location, price_per_hour, image_url)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [category_id || null, name, description || null, location || null, price_per_hour, image_url || null]
     );
 
     res.status(201).json(result.rows[0]);
@@ -75,7 +75,7 @@ const create = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { category_id, name, description, location, price_per_hour, is_active } = req.body;
+    const { category_id, name, description, location, price_per_hour, image_url, is_active } = req.body;
 
     const result = await pool.query(
       `UPDATE facilities
@@ -84,10 +84,11 @@ const update = async (req, res, next) => {
            description = COALESCE($3, description),
            location = COALESCE($4, location),
            price_per_hour = COALESCE($5, price_per_hour),
-           is_active = COALESCE($6, is_active)
-       WHERE id = $7
+           image_url = COALESCE($6, image_url),
+           is_active = COALESCE($7, is_active)
+       WHERE id = $8
        RETURNING *`,
-      [category_id, name, description, location, price_per_hour, is_active, id]
+      [category_id, name, description, location, price_per_hour, image_url, is_active, id]
     );
 
     if (result.rows.length === 0) {
