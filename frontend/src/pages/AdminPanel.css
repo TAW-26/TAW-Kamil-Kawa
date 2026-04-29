@@ -1,0 +1,101 @@
+.admin-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+}
+
+.admin-tab {
+  padding: 0.65rem 1.5rem;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #718096;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.admin-tab:hover {
+  color: #1a56db;
+}
+
+.admin-tab.active {
+  color: #1a56db;
+  border-bottom-color: #1a56db;
+}
+
+.admin-content {
+  min-height: 300px;
+}
+
+.admin-add-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-end;
+}
+
+.admin-add-form .form-input {
+  flex: 1;
+}
+
+.admin-facility-form {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.admin-facility-form h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+  color: #1a202c;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  background: #f7fafc;
+  color: #4a5568;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: #2d3748;
+}
+
+.admin-table tbody tr:hover {
+  background: #fafbfc;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 0.4rem;
+  white-space: nowrap;
+}

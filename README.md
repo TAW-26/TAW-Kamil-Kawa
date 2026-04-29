@@ -4,7 +4,7 @@
 SportReserve to aplikacja internetowa umożliwiająca użytkownikom przeglądanie dostępnych obiektów sportowych oraz dokonywanie rezerwacji on-line na wybrane terminy. System wspiera podział na role (Użytkownik / Administrator) i zastępuje tradycyjne metody rezerwacji.
 
 ## Użyte technologie
-* **Frontend:** React.js (w przygotowaniu)
+* **Frontend:** React.js (Vite) + React Router + Axios
 * **Backend:** Node.js + Express.js
 * **Baza danych:** PostgreSQL
 * **Autoryzacja:** JSON Web Token (JWT)
@@ -16,8 +16,9 @@ TAW-Kamil-Kawa/
 ├── docs/                         # Dokumentacja projektu
 │   ├── topic-selection.md        # Opis tematu
 │   ├── use-cases.md              # Przypadki użycia
-│   ├── ERD.png                    # Diagram bazy danych
+│   ├── ERD.png                   # Diagram bazy danych
 │   ├── api.md                    # Dokumentacja API
+│   ├── ui.md                     # Opis interfejsu użytkownika
 │   └── postman-testing-guide.md  # Instrukcja testowania w Postmanie
 ├── backend/                      # Serwer API
 │   ├── config/                   # Konfiguracja (baza danych)
@@ -29,6 +30,16 @@ TAW-Kamil-Kawa/
 │   ├── tests/                    # Testy automatyczne
 │   ├── index.js                  # Punkt wejścia serwera
 │   └── package.json              # Zależności backendu
+├── frontend/                     # Aplikacja React
+│   ├── src/
+│   │   ├── api/                  # Warstwa komunikacji z API
+│   │   ├── components/           # Komponenty współdzielone
+│   │   ├── context/              # Kontekst autoryzacji (AuthContext)
+│   │   ├── pages/                # Widoki / strony aplikacji
+│   │   ├── App.jsx               # Routing aplikacji
+│   │   └── main.jsx              # Punkt wejścia
+│   ├── package.json              # Zależności frontendu
+│   └── vite.config.js            # Konfiguracja Vite + proxy
 └── README.md
 ```
 
@@ -37,6 +48,7 @@ TAW-Kamil-Kawa/
 * [Przypadki użycia systemu (Use Cases)](docs/use-cases.md)
 * [Diagram Bazy Danych (ERD)](docs/ERD.png)
 * [Dokumentacja API](docs/api.md)
+* [Opis interfejsu użytkownika](docs/ui.md)
 
 ## Instrukcja uruchomienia
 
@@ -52,12 +64,13 @@ cd TAW-Kamil-Kawa
 
 ### 2. Zainstaluj zależności
 ```bash
-cd backend
-npm install
+cd backend && npm install
+cd ../frontend && npm install
 ```
 
 ### 3. Skonfiguruj zmienne środowiskowe
 ```bash
+cd backend
 cp .env.example .env
 ```
 Edytuj plik `.env` i ustaw dane dostępowe do swojej bazy PostgreSQL (`DB_USER`, `DB_PASSWORD` itd.).
@@ -65,6 +78,7 @@ Edytuj plik `.env` i ustaw dane dostępowe do swojej bazy PostgreSQL (`DB_USER`,
 ### 4. Automatyczna konfiguracja bazy danych
 Skrypt automatycznie utworzy bazę danych `sportreserve` i wszystkie tabele:
 ```bash
+cd backend
 npm run db:setup
 ```
 Opcjonalnie z danymi testowymi (przykładowi użytkownicy, kategorie, obiekty):
@@ -74,14 +88,23 @@ npm run db:setup:seed
 
 > **Uwaga:** Serwer przy starcie (`npm start`) również automatycznie tworzy tabele, jeśli jeszcze nie istnieją. Skrypt `db:setup` jest potrzebny tylko do pierwszego utworzenia samej bazy danych.
 
-### 5. Uruchom serwer
+### 5. Uruchom aplikację
+W jednym terminalu uruchom backend:
 ```bash
+cd backend
 npm start
 ```
-Serwer uruchomi się na `http://localhost:3000`.
+W drugim terminalu uruchom frontend:
+```bash
+cd frontend
+npm run dev
+```
+- **Backend API:** `http://localhost:3000`
+- **Frontend:** `http://localhost:5173`
 
 ### 6. Uruchomienie testów
 ```bash
+cd backend
 npm test
 ```
 
