@@ -1,101 +1,179 @@
+/* ---------- Tabs ---------- */
+
 .admin-tabs {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid #e2e8f0;
-  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2rem;
 }
 
 .admin-tab {
-  padding: 0.65rem 1.5rem;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.85rem 1.4rem;
   border: none;
-  background: none;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #718096;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .admin-tab:hover {
-  color: #1a56db;
+  color: var(--ink);
 }
 
 .admin-tab.active {
-  color: #1a56db;
-  border-bottom-color: #1a56db;
+  color: var(--brick-deep);
+  border-bottom-color: var(--brick);
+}
+
+.admin-tab-roman {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+
+.admin-tab.active .admin-tab-roman {
+  color: var(--brick-deep);
 }
 
 .admin-content {
-  min-height: 300px;
+  min-height: 320px;
 }
+
+/* ---------- Toolbar ---------- */
+
+.admin-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+/* ---------- Add form (categories) ---------- */
 
 .admin-add-form {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.25rem;
   align-items: flex-end;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--rule);
 }
 
-.admin-add-form .form-input {
-  flex: 1;
+.admin-add-label {
+  margin: 0;
 }
 
-.admin-facility-form {
-  background: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+/* ---------- Form (facility) ---------- */
+
+.admin-form {
+  border: 1px solid var(--ink);
+  border-top: 3px double var(--ink);
+  background: var(--paper-deep);
+  padding: 1.5rem 1.5rem 1.65rem;
+  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 1.1rem;
 }
 
-.admin-facility-form h3 {
-  margin: 0 0 0.25rem;
-  font-size: 1.1rem;
-  color: #1a202c;
+.admin-form-head .caps {
+  font-size: 0.65rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.admin-form-head h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.admin-form .rule {
+  margin: 0;
 }
 
 .form-actions {
   display: flex;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
+
+/* ---------- Table ---------- */
 
 .admin-table-wrap {
   overflow-x: auto;
+  border-top: 2px solid var(--ink);
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 
 .admin-table th {
   text-align: left;
-  padding: 0.65rem 0.75rem;
-  background: #f7fafc;
-  color: #4a5568;
-  font-weight: 600;
-  border-bottom: 2px solid #e2e8f0;
+  padding: 0.75rem 0.85rem;
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-bottom: 1px solid var(--ink);
   white-space: nowrap;
 }
 
 .admin-table td {
-  padding: 0.65rem 0.75rem;
-  border-bottom: 1px solid #f0f0f0;
-  color: #2d3748;
+  padding: 0.85rem 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+  vertical-align: top;
+}
+
+.admin-table tbody tr:nth-child(even) {
+  background: var(--paper-deep);
 }
 
 .admin-table tbody tr:hover {
-  background: #fafbfc;
+  background: oklch(94% 0.025 80);
 }
 
-.actions-cell {
+.admin-table-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.admin-table small.caps {
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+}
+
+.admin-table-time {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+.admin-actions-cell {
   display: flex;
   gap: 0.4rem;
   white-space: nowrap;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .admin-tab { padding: 0.7rem 0.85rem; font-size: 0.7rem; gap: 0.35rem; }
+  .admin-add-form { grid-template-columns: 1fr; }
 }

@@ -55,7 +55,7 @@ const create = async (req, res, next) => {
     // Tworzenie rezerwacji
     const result = await pool.query(
       `INSERT INTO reservations (user_id, facility_id, start_time, end_time, status, total_price)
-       VALUES ($1, $2, $3, $4, 'confirmed', $5) RETURNING *`,
+       VALUES ($1, $2, $3, $4, 'pending', $5) RETURNING *`,
       [user_id, facility_id, start_time, end_time, total_price]
     );
 

@@ -35,8 +35,21 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1 className="auth-title">Logowanie</h1>
-        <p className="auth-subtitle">Witaj z powrotem! Zaloguj się do swojego konta.</p>
+        <span className="auth-corner auth-corner-tl" aria-hidden="true" />
+        <span className="auth-corner auth-corner-tr" aria-hidden="true" />
+        <span className="auth-corner auth-corner-bl" aria-hidden="true" />
+        <span className="auth-corner auth-corner-br" aria-hidden="true" />
+
+        <header className="auth-header">
+          <span className="caps">Logowanie</span>
+          <h1 className="auth-title">Logowanie</h1>
+          <p className="auth-subtitle">
+            Witaj z powrotem. Zaloguj się, aby
+            kontynuować rezerwacje.
+          </p>
+        </header>
+
+        <hr className="rule" />
 
         <form onSubmit={handleSubmit} className="auth-form">
           {error && <div className="form-error">{error}</div>}
@@ -46,7 +59,7 @@ export default function LoginPage() {
             <input
               type="email"
               className="form-input"
-              placeholder="jan@example.com"
+              placeholder="np. jan@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -66,7 +79,7 @@ export default function LoginPage() {
           </label>
 
           <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%' }}>
-            {loading ? 'Logowanie...' : 'Zaloguj się'}
+            {loading ? 'Logowanie…' : 'Zaloguj się'}
           </button>
         </form>
 

@@ -1,7 +1,7 @@
-# Temat projektu: Internetowy System Rezerwacji Obiektów Sportowych „SportReserve”
+# Temat projektu: RezSport — Internetowy System Rezerwacji Obiektów Sportowych
 
 ## 1. Opis wybranego tematu projektu
-Projekt dotyczy stworzenia aplikacji webowej umożliwiającej użytkownikom przeglądanie dostępnych obiektów sportowych oraz dokonywanie rezerwacji online na wybrane terminy. System ma na celu zastąpienie tradycyjnych metod rezerwacji nowoczesnym interfejsem dostępnym z poziomu przeglądarki, zapewniając podgląd dostępności w czasie rzeczywistym.
+Projekt **RezSport** to aplikacja webowa umożliwiająca użytkownikom przeglądanie dostępnych obiektów sportowych oraz dokonywanie rezerwacji online na wybrane terminy. System ma na celu zastąpienie tradycyjnych metod rezerwacji nowoczesnym interfejsem dostępnym z poziomu przeglądarki, zapewniając podgląd dostępności w czasie rzeczywistym. Frontend utrzymany jest w stylu „almanach vintage" — typografia szeryfowa, paleta sepii i ceglanego czerwonego, hairline rules zamiast kart-pudełek.
 
 ## 2. Cel projektu
 Głównym celem projektu jest dostarczenie narzędzia, które zautomatyzuje proces zarządzania grafikiem obiektów sportowych. Z perspektywy edukacyjnej, celem jest implementacja pełnej aplikacji z uwzględnieniem:

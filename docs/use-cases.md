@@ -1,4 +1,4 @@
-# Przypadki użycia systemu SportReserve
+# Przypadki użycia systemu RezSport
 
 ## 1. Główni aktorzy systemu
 * **Klient (Użytkownik zalogowany)** – osoba poszukująca obiektu sportowego w celu dokonania rezerwacji.

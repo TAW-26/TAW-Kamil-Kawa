@@ -1,7 +1,11 @@
-# SportReserve - System Rezerwacji Obiektów Sportowych
+# RezSport — Almanach Obiektów Sportowych
 
 ## Opis projektu
-SportReserve to aplikacja internetowa umożliwiająca użytkownikom przeglądanie dostępnych obiektów sportowych oraz dokonywanie rezerwacji on-line na wybrane terminy. System wspiera podział na role (Użytkownik / Administrator) i zastępuje tradycyjne metody rezerwacji.
+**RezSport** to aplikacja webowa umożliwiająca użytkownikom przeglądanie obiektów sportowych oraz rezerwowanie terminów online. System wspiera podział na role (Użytkownik / Administrator) i zastępuje tradycyjne metody rezerwacji nowoczesnym interfejsem dostępnym z poziomu przeglądarki.
+
+Frontend utrzymany jest w stylu **„Almanach Vintage"** — DM Serif Display + Newsreader + IBM Plex Mono, paleta sepii i ceglanego czerwonego, hairline rules zamiast kart-pudełek, własne line-art SVG zamiast emoji.
+
+> **Uwaga porządkowa:** wewnętrzne nazewnictwo backendu (baza `sportreserve`, prefiks `/api`) zostało celowo niezmienione, aby uniknąć rozjazdu z istniejącą konfiguracją deweloperską i testami. Rebrand dotyczy warstwy widzianej przez użytkownika (UI, dokumentacja, tytuły, logo).
 
 ## Użyte technologie
 * **Frontend:** React.js (Vite) + React Router + Axios
@@ -18,12 +22,12 @@ TAW-Kamil-Kawa/
 │   ├── use-cases.md              # Przypadki użycia
 │   ├── ERD.png                   # Diagram bazy danych
 │   ├── api.md                    # Dokumentacja API
-│   ├── ui.md                     # Opis interfejsu użytkownika
+│   ├── ui.md                     # Opis UI + design system
 │   └── postman-testing-guide.md  # Instrukcja testowania w Postmanie
 ├── backend/                      # Serwer API
 │   ├── config/                   # Konfiguracja (baza danych)
 │   ├── controllers/              # Logika biznesowa
-│   ├── middleware/                # Middleware (JWT, błędy)
+│   ├── middleware/               # Middleware (JWT, błędy)
 │   ├── routes/                   # Definicje endpointów
 │   ├── scripts/                  # Skrypty pomocnicze
 │   ├── sql/                      # Skrypty SQL
@@ -34,21 +38,37 @@ TAW-Kamil-Kawa/
 │   ├── src/
 │   │   ├── api/                  # Warstwa komunikacji z API
 │   │   ├── components/           # Komponenty współdzielone
-│   │   ├── context/              # Kontekst autoryzacji (AuthContext)
+│   │   ├── context/              # Kontekst autoryzacji
+│   │   ├── icons/                # Inline SVG line-art (Almanach Vintage)
 │   │   ├── pages/                # Widoki / strony aplikacji
 │   │   ├── App.jsx               # Routing aplikacji
+│   │   ├── index.css             # Design system (OKLCH, fonty, buttony)
 │   │   └── main.jsx              # Punkt wejścia
 │   ├── package.json              # Zależności frontendu
 │   └── vite.config.js            # Konfiguracja Vite + proxy
 └── README.md
 ```
 
+## System wizualny (skrót)
+
+| Element | Wartość |
+|---------|---------|
+| Display font | DM Serif Display |
+| Body font | Newsreader |
+| Mono / numeric | IBM Plex Mono |
+| Tło | `oklch(96% 0.018 80)` — kremowy papier |
+| Tekst główny | `oklch(22% 0.035 50)` — ciepły brąz |
+| Primary | `oklch(52% 0.160 35)` — ceglany czerwony |
+| Accent | `oklch(38% 0.100 150)` — butelkowa zieleń |
+
+Pełny opis: [docs/ui.md](docs/ui.md).
+
 ## Dokumentacja
 * [Opis tematu i zakres funkcjonalny](docs/topic-selection.md)
 * [Przypadki użycia systemu (Use Cases)](docs/use-cases.md)
 * [Diagram Bazy Danych (ERD)](docs/ERD.png)
 * [Dokumentacja API](docs/api.md)
-* [Opis interfejsu użytkownika](docs/ui.md)
+* [Opis interfejsu użytkownika + design system](docs/ui.md)
 
 ## Instrukcja uruchomienia
 
@@ -76,25 +96,24 @@ cp .env.example .env
 Edytuj plik `.env` i ustaw dane dostępowe do swojej bazy PostgreSQL (`DB_USER`, `DB_PASSWORD` itd.).
 
 ### 4. Automatyczna konfiguracja bazy danych
-Skrypt automatycznie utworzy bazę danych `sportreserve` i wszystkie tabele:
 ```bash
 cd backend
 npm run db:setup
 ```
-Opcjonalnie z danymi testowymi (przykładowi użytkownicy, kategorie, obiekty):
+Opcjonalnie z danymi testowymi:
 ```bash
 npm run db:setup:seed
 ```
 
-> **Uwaga:** Serwer przy starcie (`npm start`) również automatycznie tworzy tabele, jeśli jeszcze nie istnieją. Skrypt `db:setup` jest potrzebny tylko do pierwszego utworzenia samej bazy danych.
+> **Uwaga:** Serwer przy starcie (`npm start`) automatycznie tworzy tabele, jeśli jeszcze nie istnieją. Skrypt `db:setup` jest potrzebny tylko do pierwszego utworzenia samej bazy danych.
 
 ### 5. Uruchom aplikację
-W jednym terminalu uruchom backend:
+W jednym terminalu:
 ```bash
 cd backend
 npm start
 ```
-W drugim terminalu uruchom frontend:
+W drugim terminalu:
 ```bash
 cd frontend
 npm run dev
@@ -126,4 +145,4 @@ npm test
 | PATCH | `/api/reservations/:id/cancel` | Właściciel/Admin | Anulowanie rezerwacji |
 | GET | `/api/reservations` | Admin | Wszystkie rezerwacje |
 
-Pełna dokumentacja: [docs/api.md](docs/api.md)
+Pełna dokumentacja: [docs/api.md](docs/api.md).

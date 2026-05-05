@@ -4,6 +4,8 @@ import { facilitiesAPI, categoriesAPI } from '../api/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
+import Icon from '../icons/Icon';
+import { categoryIconName } from '../icons/categoryIconName';
 import './FacilitiesPage.css';
 
 export default function FacilitiesPage() {
@@ -44,14 +46,19 @@ export default function FacilitiesPage() {
 
   return (
     <div className="page">
-      <div className="page-header">
+      <header className="page-header">
+        <span className="caps">Lista obiektów</span>
         <h1>Obiekty sportowe</h1>
-        <p className="page-subtitle">Wybierz obiekt i zarezerwuj termin</p>
-      </div>
+        <p className="page-subtitle">
+          Pełny spis dostępnych obiektów sportowych.
+          Filtruj po kategorii, by zawęzić wyniki.
+        </p>
+      </header>
 
-      <div className="filter-bar">
+      <div className="catalog-filter" role="tablist">
         <button
-          className={`filter-btn ${!selectedCategory ? 'active' : ''}`}
+          role="tab"
+          className={`catalog-filter-tab ${!selectedCategory ? 'active' : ''}`}
           onClick={() => handleCategoryChange('')}
         >
           Wszystkie
@@ -59,7 +66,8 @@ export default function FacilitiesPage() {
         {categories.map((cat) => (
           <button
             key={cat.id}
-            className={`filter-btn ${selectedCategory === String(cat.id) ? 'active' : ''}`}
+            role="tab"
+            className={`catalog-filter-tab ${selectedCategory === String(cat.id) ? 'active' : ''}`}
             onClick={() => handleCategoryChange(cat.id)}
           >
             {cat.name}
@@ -71,32 +79,56 @@ export default function FacilitiesPage() {
         <LoadingSpinner />
       ) : facilities.length === 0 ? (
         <EmptyState
-          icon="🏟️"
+          icon="book"
           title="Brak obiektów"
-          message="Nie znaleziono obiektów sportowych dla wybranej kategorii."
+          message="Nie znaleziono obiektów dla wybranej kategorii. Spróbuj wybrać inną kategorię."
         />
       ) : (
-        <div className="facilities-grid">
-          {facilities.map((f) => (
-            <Link key={f.id} to={`/facilities/${f.id}`} className="facility-card">
-              <div className="facility-card-img">
+        <div className="catalog-grid">
+          {facilities.map((f, idx) => (
+            <Link key={f.id} to={`/facilities/${f.id}`} className="entry">
+              <div className="entry-header">
+                <span className="entry-num numeric">
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+                {f.category_name && (
+                  <span className="entry-cat caps">{f.category_name}</span>
+                )}
+              </div>
+
+              <div className="entry-illustration">
                 {f.image_url ? (
                   <img src={f.image_url} alt={f.name} loading="lazy" />
                 ) : (
-                  <div className="facility-card-img-placeholder">🏟️</div>
+                  <div className="entry-illustration-empty">
+                    <Icon name={categoryIconName(f.category_name)} size={56} />
+                  </div>
                 )}
+                <span className="entry-illustration-caption caps">
+                  {f.name}
+                </span>
               </div>
-              <div className="facility-card-body">
-                <div className="facility-card-header">
-                  <span className="facility-category">{f.category_name || 'Brak kategorii'}</span>
+
+              <h3 className="entry-title">{f.name}</h3>
+
+              <p className="entry-location">
+                <Icon name="pin" size={13} />
+                <span>{f.location || 'Lokalizacja nieznana'}</span>
+              </p>
+
+              <hr className="rule" />
+
+              <dl className="entry-meta">
+                <div className="entry-meta-row">
+                  <dt className="caps">Cena / 1 godz.</dt>
+                  <dd className="numeric">{parseFloat(f.price_per_hour).toFixed(2)} zł</dd>
                 </div>
-                <h3 className="facility-name">{f.name}</h3>
-                <p className="facility-location">📍 {f.location || 'Brak lokalizacji'}</p>
-                <div className="facility-card-footer">
-                  <span className="facility-price">{parseFloat(f.price_per_hour).toFixed(2)} zł/h</span>
-                  <span className="btn btn-primary btn-sm">Szczegóły</span>
-                </div>
-              </div>
+              </dl>
+
+              <span className="entry-cta">
+                Szczegóły i rezerwacja
+                <Icon name="arrow" size={13} />
+              </span>
             </Link>
           ))}
         </div>

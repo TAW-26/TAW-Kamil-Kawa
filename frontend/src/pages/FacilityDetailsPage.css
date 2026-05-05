@@ -1,200 +1,272 @@
-.back-link {
+/* ---------- Powrót ---------- */
+
+.entry-back {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  color: #1a56db;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
   margin-bottom: 1.5rem;
   padding: 0.3rem 0;
 }
 
-.back-link:hover {
-  text-decoration: underline;
+.entry-back:hover {
+  color: var(--brick-deep);
 }
 
-/* ---- Hero image ---- */
+/* ---------- Chapter head ---------- */
 
-.detail-hero-img {
-  position: relative;
-  width: 100%;
-  height: 340px;
-  border-radius: 16px;
-  overflow: hidden;
-  margin-bottom: 2rem;
+.chapter-head {
+  margin-bottom: 1.25rem;
 }
 
-.detail-hero-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.chapter-head .caps {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.7rem;
 }
 
-.detail-hero-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 2rem 2rem 1.5rem;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-  color: #fff;
+.chapter-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.55rem;
 }
 
-.detail-hero-overlay .facility-category {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  backdrop-filter: blur(4px);
-}
-
-.detail-hero-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin: 0.6rem 0 0.3rem;
-}
-
-.detail-hero-location {
-  font-size: 0.95rem;
-  opacity: 0.9;
+.chapter-byline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
   margin: 0;
 }
 
-/* ---- Layout ---- */
+/* ---------- Layout ---------- */
 
-.detail-layout {
+.chapter-grid {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 3rem;
+  margin-top: 2rem;
   align-items: start;
 }
 
-@media (max-width: 860px) {
-  .detail-layout {
+@media (max-width: 920px) {
+  .chapter-grid {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
 }
 
-/* ---- Info section ---- */
+/* ---------- Figure ---------- */
 
-.detail-title {
-  font-size: 1.75rem;
-  color: #1a202c;
-  margin: 0 0 0.5rem;
-}
-
-.detail-location {
-  color: #718096;
-  font-size: 0.95rem;
-  margin: 0 0 1.5rem;
-}
-
-.detail-section {
-  margin-bottom: 1.5rem;
-}
-
-.detail-section h2 {
-  font-size: 1.1rem;
-  color: #1a202c;
-  margin: 0 0 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #edf2f7;
-}
-
-.detail-desc {
-  color: #4a5568;
-  line-height: 1.8;
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.detail-features {
+.chapter-figure {
+  margin: 0 0 2.25rem;
+  padding: 0.85rem;
+  border: 1px solid var(--ink);
+  background: var(--paper-deep);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
 }
 
-.detail-feature {
+.chapter-figure img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  filter: sepia(0.18) saturate(0.92) contrast(0.96);
+  display: block;
+}
+
+.chapter-figure-empty {
+  height: 360px;
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.85rem 1rem;
-  background: #f8fafc;
-  border-radius: 10px;
-  border: 1px solid #edf2f7;
+  justify-content: center;
+  color: var(--brick-deep);
+  background: var(--paper);
+  border: 1px solid var(--rule);
 }
 
-.detail-feature-icon {
-  font-size: 1.4rem;
-  flex-shrink: 0;
-}
-
-.detail-feature-label {
-  display: block;
-  font-size: 0.75rem;
-  color: #a0aec0;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.detail-feature-value {
-  display: block;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #1a202c;
-}
-
-/* ---- Reservation sidebar ---- */
-
-.detail-reservation {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 1.75rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  position: sticky;
-  top: 80px;
-}
-
-.detail-reservation h2 {
-  font-size: 1.15rem;
-  margin: 0 0 1.25rem;
-  color: #1a202c;
-}
-
-.login-prompt {
+.chapter-figure figcaption {
+  margin-top: 0.65rem;
   text-align: center;
-  padding: 1.5rem 0 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
 }
 
-.login-prompt-icon {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
+/* ---------- Prose ---------- */
+
+.chapter-prose {
+  margin-bottom: 2.25rem;
 }
 
-.login-prompt p {
-  color: #718096;
-  margin-bottom: 1.25rem;
-  font-size: 0.9rem;
+.chapter-prose h2,
+.chapter-spec h2 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.chapter-dropcap {
+  font-size: 1.08rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.chapter-dropcap::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.6rem;
+  line-height: 0.9;
+  float: left;
+  padding: 0.2rem 0.55rem 0 0;
+  color: var(--brick-deep);
+}
+
+/* ---------- Specification table ---------- */
+
+.spec-table {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--rule);
+}
+
+.spec-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1.25rem;
+  align-items: baseline;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.spec-row dt {
+  font-size: 0.7rem;
+}
+
+.spec-row dd {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  margin: 0;
+  color: var(--ink);
+}
+
+.spec-row dd.numeric {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .spec-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+    padding: 0.7rem 0;
+  }
+}
+
+/* ---------- Reservation panel ---------- */
+
+.chapter-aside {
+  position: sticky;
+  top: 100px;
+}
+
+@media (max-width: 920px) {
+  .chapter-aside {
+    position: static;
+  }
+}
+
+.reservation-panel {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  padding: 1.5rem 1.45rem 1.65rem;
+  position: relative;
+}
+
+.reservation-panel::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 8px;
+  right: 8px;
+  border-top: 2px solid var(--brick);
+}
+
+.reservation-eyebrow {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.62rem;
+}
+
+.reservation-panel h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
 }
 
 .reservation-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
-.estimated-price {
+.reservation-quote {
+  border: 1px solid var(--ink);
+  background: var(--paper-deep);
+  padding: 0.85rem 1rem 0.95rem;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.85rem 1rem;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 10px;
-  color: #166534;
-  font-size: 0.95rem;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
-.estimated-price strong {
-  font-size: 1.2rem;
+.reservation-quote-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+
+.reservation-quote-total {
+  font-size: 1.5rem;
+  color: var(--brick-deep);
+  font-family: var(--font-mono);
+}
+
+/* ---------- Login prompt ---------- */
+
+.login-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.5rem 0 0.25rem;
+  text-align: center;
+}
+
+.login-prompt-icon {
+  color: var(--brick-deep);
+  display: inline-flex;
+  margin-bottom: 0.25rem;
+}
+
+.login-prompt p {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  font-style: italic;
+  margin: 0 0 0.6rem;
+  max-width: 30ch;
 }

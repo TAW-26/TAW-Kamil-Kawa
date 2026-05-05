@@ -18,7 +18,7 @@ app.use(cors());
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'SportReserve API działa!',
+    message: 'RezSport API działa!',
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
@@ -44,7 +44,7 @@ if (require.main === module) {
   initializeDatabase()
     .then(() => {
       app.listen(PORT, () => {
-        console.log(`Serwer SportReserve działa na porcie ${PORT}`);
+        console.log(`Serwer RezSport działa na porcie ${PORT}`);
         console.log(`Otwórz: http://localhost:${PORT}`);
       });
     })

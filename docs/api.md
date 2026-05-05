@@ -1,4 +1,4 @@
-# SportReserve - Dokumentacja API
+# RezSport - Dokumentacja API
 
 ## Informacje ogólne
 - **Bazowy URL:** `http://localhost:3000`

@@ -1,20 +1,29 @@
-.error-container {
+.error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 3rem 1rem;
   text-align: center;
+  gap: 0.7rem;
 }
 
-.error-icon {
-  font-size: 2.5rem;
-  color: #e53e3e;
-  margin-bottom: 0.75rem;
+.error-state-icon {
+  color: var(--brick);
+  display: inline-flex;
 }
 
-.error-text {
-  color: #c53030;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  max-width: 400px;
+.error-state-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--ink);
+  margin: 0;
+}
+
+.error-state-text {
+  color: var(--ink-soft);
+  font-style: italic;
+  font-size: 0.95rem;
+  max-width: 44ch;
+  line-height: 1.55;
+  margin-bottom: 0.4rem;
 }
