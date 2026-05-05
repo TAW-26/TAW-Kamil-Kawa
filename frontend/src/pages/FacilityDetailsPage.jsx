@@ -4,6 +4,8 @@ import { facilitiesAPI, reservationsAPI } from '../api/api';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
+import Icon from '../icons/Icon';
+import { categoryIconName } from '../icons/categoryIconName';
 import './FacilityDetailsPage.css';
 
 function getMinDateTime() {
@@ -48,7 +50,10 @@ export default function FacilityDetailsPage() {
     if (!startTime || !endTime || !facility) return null;
     const hours = (new Date(endTime) - new Date(startTime)) / (1000 * 60 * 60);
     if (hours <= 0) return null;
-    return (hours * parseFloat(facility.price_per_hour)).toFixed(2);
+    return {
+      hours: hours.toFixed(2),
+      total: (hours * parseFloat(facility.price_per_hour)).toFixed(2),
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -87,7 +92,7 @@ export default function FacilityDetailsPage() {
         start_time: start.toISOString(),
         end_time: end.toISOString(),
       });
-      setSuccess('Rezerwacja utworzona pomyślnie! Sprawdź ją w zakładce "Moje rezerwacje".');
+      setSuccess('Rezerwacja została złożona. Sprawdź ją w zakładce „Moje rezerwacje".');
       setStartTime('');
       setEndTime('');
     } catch (err) {
@@ -102,117 +107,157 @@ export default function FacilityDetailsPage() {
   if (error) return <div className="page"><ErrorMessage message={error} onRetry={fetchFacility} /></div>;
   if (!facility) return null;
 
-  const estimatedPrice = calculatePrice();
+  const price = calculatePrice();
 
   return (
     <div className="page">
-      <Link to="/facilities" className="back-link">&larr; Powrót do listy obiektów</Link>
+      <Link to="/facilities" className="entry-back">
+        <Icon name="back" size={14} />
+        <span>Powrót do katalogu</span>
+      </Link>
 
-      {facility.image_url && (
-        <div className="detail-hero-img">
-          <img src={facility.image_url} alt={facility.name} />
-          <div className="detail-hero-overlay">
-            <span className="facility-category">{facility.category_name || 'Obiekt sportowy'}</span>
-            <h1 className="detail-hero-title">{facility.name}</h1>
-            <p className="detail-hero-location">📍 {facility.location}</p>
-          </div>
-        </div>
-      )}
+      <article className="chapter">
+        <header className="chapter-head">
+          <span className="caps">
+            Obiekt #{facility.id}
+            {facility.category_name && (
+              <>&nbsp;·&nbsp;Dział: {facility.category_name}</>
+            )}
+          </span>
+          <h1 className="chapter-title">{facility.name}</h1>
+          <p className="chapter-byline">
+            <Icon name="pin" size={14} />
+            <span>{facility.location || 'Lokalizacja nieznana'}</span>
+          </p>
+        </header>
 
-      <div className="detail-layout">
-        <div className="detail-info">
-          {!facility.image_url && (
-            <>
-              <span className="facility-category" style={{ display: 'inline-block', marginBottom: '0.75rem' }}>
-                {facility.category_name || 'Brak kategorii'}
-              </span>
-              <h1 className="detail-title">{facility.name}</h1>
-              <p className="detail-location">📍 {facility.location || 'Brak lokalizacji'}</p>
-            </>
-          )}
+        <hr className="rule-thick" />
 
-          <div className="detail-section">
-            <h2>Opis obiektu</h2>
-            <p className="detail-desc">{facility.description || 'Brak opisu'}</p>
-          </div>
-
-          <div className="detail-features">
-            <div className="detail-feature">
-              <span className="detail-feature-icon">💰</span>
-              <div>
-                <span className="detail-feature-label">Cena za godzinę</span>
-                <span className="detail-feature-value">{parseFloat(facility.price_per_hour).toFixed(2)} zł</span>
-              </div>
-            </div>
-            <div className="detail-feature">
-              <span className="detail-feature-icon">📍</span>
-              <div>
-                <span className="detail-feature-label">Lokalizacja</span>
-                <span className="detail-feature-value">{facility.location || '—'}</span>
-              </div>
-            </div>
-            <div className="detail-feature">
-              <span className="detail-feature-icon">🏷️</span>
-              <div>
-                <span className="detail-feature-label">Kategoria</span>
-                <span className="detail-feature-value">{facility.category_name || '—'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="detail-reservation">
-          <h2>Zarezerwuj termin</h2>
-
-          {!isLoggedIn ? (
-            <div className="login-prompt">
-              <div className="login-prompt-icon">🔒</div>
-              <p>Zaloguj się, aby zarezerwować ten obiekt.</p>
-              <Link to="/login" className="btn btn-primary" style={{ width: '100%' }}>Zaloguj się</Link>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="reservation-form">
-              {formError && <div className="form-error">{formError}</div>}
-              {success && <div className="form-success">{success}</div>}
-
-              <label className="form-label">
-                Data i godzina rozpoczęcia
-                <input
-                  type="datetime-local"
-                  className="form-input"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  min={minDateTime}
-                  required
-                />
-              </label>
-
-              <label className="form-label">
-                Data i godzina zakończenia
-                <input
-                  type="datetime-local"
-                  className="form-input"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  min={startTime || minDateTime}
-                  required
-                />
-              </label>
-
-              {estimatedPrice && (
-                <div className="estimated-price">
-                  <span>Szacowana cena</span>
-                  <strong>{estimatedPrice} zł</strong>
+        <div className="chapter-grid">
+          <div className="chapter-content">
+            <figure className="chapter-figure">
+              {facility.image_url ? (
+                <img src={facility.image_url} alt={facility.name} />
+              ) : (
+                <div className="chapter-figure-empty">
+                  <Icon name={categoryIconName(facility.category_name)} size={88} />
                 </div>
               )}
+              <figcaption className="caps">
+                {facility.name}
+                {facility.category_name && <> · {facility.category_name}</>}
+              </figcaption>
+            </figure>
 
-              <button type="submit" className="btn btn-primary btn-lg" disabled={submitting} style={{ width: '100%' }}>
-                {submitting ? 'Rezerwuję...' : 'Zarezerwuj teraz'}
-              </button>
-            </form>
-          )}
+            <section className="chapter-prose">
+              <h2>Opis</h2>
+              <p className="chapter-dropcap">
+                {facility.description || 'Wpis nie zawiera dodatkowego opisu obiektu.'}
+              </p>
+            </section>
+
+            <section className="chapter-spec">
+              <h2>Specyfikacja</h2>
+              <dl className="spec-table">
+                <div className="spec-row">
+                  <dt className="caps">Cena / 1 godzina</dt>
+                  <dd className="numeric">{parseFloat(facility.price_per_hour).toFixed(2)} zł</dd>
+                </div>
+                <div className="spec-row">
+                  <dt className="caps">Lokalizacja</dt>
+                  <dd>{facility.location || '—'}</dd>
+                </div>
+                <div className="spec-row">
+                  <dt className="caps">Dział</dt>
+                  <dd>{facility.category_name || '—'}</dd>
+                </div>
+                <div className="spec-row">
+                  <dt className="caps">Status</dt>
+                  <dd>
+                    <span className="status-badge status-confirmed">Czynny</span>
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          </div>
+
+          <aside className="chapter-aside">
+            <div className="reservation-panel">
+              <span className="caps reservation-eyebrow">Formularz rezerwacji</span>
+              <h2>Zarezerwuj termin</h2>
+
+              {!isLoggedIn ? (
+                <div className="login-prompt">
+                  <span className="login-prompt-icon">
+                    <Icon name="lock" size={36} />
+                  </span>
+                  <p>
+                    Rezerwacja wymaga uprzedniego założenia konta lub zalogowania
+                    się do serwisu.
+                  </p>
+                  <Link to="/login" className="btn btn-primary" style={{ width: '100%' }}>
+                    Zaloguj się
+                  </Link>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="reservation-form">
+                  {formError && <div className="form-error">{formError}</div>}
+                  {success && <div className="form-success">{success}</div>}
+
+                  <label className="form-label">
+                    Początek
+                    <input
+                      type="datetime-local"
+                      className="form-input"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      min={minDateTime}
+                      required
+                    />
+                  </label>
+
+                  <label className="form-label">
+                    Zakończenie
+                    <input
+                      type="datetime-local"
+                      className="form-input"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      min={startTime || minDateTime}
+                      required
+                    />
+                  </label>
+
+                  {price && (
+                    <div className="reservation-quote">
+                      <span className="caps">Wycena wstępna</span>
+                      <div className="reservation-quote-row">
+                        <span className="numeric">{price.hours} h</span>
+                        <span aria-hidden="true">×</span>
+                        <span className="numeric">
+                          {parseFloat(facility.price_per_hour).toFixed(2)} zł
+                        </span>
+                      </div>
+                      <strong className="numeric reservation-quote-total">
+                        {price.total} zł
+                      </strong>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-lg"
+                    disabled={submitting}
+                    style={{ width: '100%' }}
+                  >
+                    {submitting ? 'Zapisuję…' : 'Zarezerwuj termin'}
+                  </button>
+                </form>
+              )}
+            </div>
+          </aside>
         </div>
-      </div>
+      </article>
     </div>
   );
 }

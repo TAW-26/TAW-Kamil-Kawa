@@ -44,30 +44,36 @@ function CategoriesTab() {
   return (
     <div>
       <form onSubmit={handleAdd} className="admin-add-form">
-        <input
-          type="text"
-          className="form-input"
-          placeholder="Nazwa nowej kategorii"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          required
-        />
+        <label className="form-label admin-add-label">
+          Nowa kategoria
+          <input
+            type="text"
+            className="form-input"
+            placeholder="np. Lodowisko"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            required
+          />
+        </label>
         <button type="submit" className="btn btn-primary" disabled={adding}>
-          {adding ? 'Dodawanie...' : 'Dodaj'}
+          {adding ? 'Dodaję…' : 'Dodaj'}
         </button>
       </form>
 
       {categories.length === 0 ? (
-        <EmptyState icon="📁" title="Brak kategorii" />
+        <EmptyState icon="book" title="Brak kategorii" />
       ) : (
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
-              <tr><th>ID</th><th>Nazwa</th></tr>
+              <tr><th>Nr</th><th>Nazwa</th></tr>
             </thead>
             <tbody>
-              {categories.map((c) => (
-                <tr key={c.id}><td>{c.id}</td><td>{c.name}</td></tr>
+              {categories.map((c, idx) => (
+                <tr key={c.id}>
+                  <td className="numeric">{String(idx + 1).padStart(2, '0')}</td>
+                  <td className="admin-table-name">{c.name}</td>
+                </tr>
               ))}
             </tbody>
           </table>
@@ -155,66 +161,114 @@ function FacilitiesTab() {
 
   return (
     <div>
-      <div style={{ marginBottom: '1rem' }}>
-        <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(!showForm); }}>
-          {showForm && !editId ? 'Anuluj' : '+ Dodaj obiekt'}
+      <div className="admin-toolbar">
+        <button
+          className="btn btn-outline"
+          onClick={() => { resetForm(); setShowForm(!showForm); }}
+        >
+          {showForm && !editId ? 'Anuluj' : 'Dodaj wpis'}
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="admin-facility-form">
-          <h3>{editId ? 'Edytuj obiekt' : 'Nowy obiekt'}</h3>
+        <form onSubmit={handleSubmit} className="admin-form">
+          <header className="admin-form-head">
+            <span className="caps">Formularz redakcyjny</span>
+            <h3>{editId ? 'Edytuj obiekt' : 'Nowy obiekt'}</h3>
+          </header>
+          <hr className="rule" />
+
           <div className="form-row">
             <label className="form-label">
               Nazwa *
-              <input type="text" className="form-input" name="name" value={form.name} onChange={handleChange} required />
+              <input
+                type="text"
+                className="form-input"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
             </label>
             <label className="form-label">
-              Kategoria
+              Dział
               <select className="form-input" name="category_id" value={form.category_id} onChange={handleChange}>
-                <option value="">-- brak --</option>
+                <option value="">— brak —</option>
                 {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </label>
           </div>
+
           <label className="form-label">
             Lokalizacja
-            <input type="text" className="form-input" name="location" value={form.location} onChange={handleChange} />
+            <input
+              type="text"
+              className="form-input"
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+            />
           </label>
+
           <label className="form-label">
             Opis
-            <textarea className="form-input" name="description" rows="3" value={form.description} onChange={handleChange} />
+            <textarea
+              className="form-input"
+              name="description"
+              rows="3"
+              value={form.description}
+              onChange={handleChange}
+            />
           </label>
+
           <label className="form-label">
             Cena za godzinę (zł) *
-            <input type="number" step="0.01" min="0" className="form-input" name="price_per_hour" value={form.price_per_hour} onChange={handleChange} required />
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              className="form-input"
+              name="price_per_hour"
+              value={form.price_per_hour}
+              onChange={handleChange}
+              required
+            />
           </label>
+
           <div className="form-actions">
             <button type="submit" className="btn btn-primary" disabled={submitting}>
-              {submitting ? 'Zapisywanie...' : editId ? 'Zapisz zmiany' : 'Dodaj obiekt'}
+              {submitting ? 'Zapis…' : editId ? 'Zapisz zmiany' : 'Dodaj obiekt'}
             </button>
-            <button type="button" className="btn btn-outline" onClick={resetForm}>Anuluj</button>
+            <button type="button" className="btn btn-ghost" onClick={resetForm}>Anuluj</button>
           </div>
         </form>
       )}
 
       {facilities.length === 0 ? (
-        <EmptyState icon="🏟️" title="Brak obiektów" />
+        <EmptyState icon="book" title="Brak obiektów" />
       ) : (
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
-              <tr><th>Nazwa</th><th>Kategoria</th><th>Lokalizacja</th><th>Cena/h</th><th>Akcje</th></tr>
+              <tr>
+                <th>Nr</th>
+                <th>Nazwa</th>
+                <th>Dział</th>
+                <th>Lokalizacja</th>
+                <th>Cena / h</th>
+                <th>Akcje</th>
+              </tr>
             </thead>
             <tbody>
               {facilities.map((f) => (
                 <tr key={f.id}>
-                  <td>{f.name}</td>
+                  <td className="numeric">{String(f.id).padStart(3, '0')}</td>
+                  <td className="admin-table-name">{f.name}</td>
                   <td>{f.category_name || '—'}</td>
                   <td>{f.location || '—'}</td>
-                  <td>{parseFloat(f.price_per_hour).toFixed(2)} zł</td>
-                  <td className="actions-cell">
-                    <button className="btn btn-outline btn-sm" onClick={() => openEdit(f)}>Edytuj</button>
+                  <td className="numeric">{parseFloat(f.price_per_hour).toFixed(2)}</td>
+                  <td className="admin-actions-cell">
+                    <button className="btn btn-ghost btn-sm" onClick={() => openEdit(f)}>Edytuj</button>
                     <button className="btn btn-danger btn-sm" onClick={() => handleDeactivate(f.id)}>Dezaktywuj</button>
                   </td>
                 </tr>
@@ -271,37 +325,63 @@ function ReservationsTab() {
 
   return (
     <div>
-      <div className="filter-bar" style={{ justifyContent: 'flex-start', marginBottom: '1rem' }}>
-        {['', 'confirmed', 'cancelled', 'pending'].map((s) => (
+      <div className="catalog-filter" style={{ marginBottom: '1.5rem' }}>
+        {[
+          { key: '', label: 'Wszystkie' },
+          { key: 'confirmed', label: 'Potwierdzone' },
+          { key: 'cancelled', label: 'Anulowane' },
+          { key: 'pending', label: 'Oczekujące' },
+        ].map((s) => (
           <button
-            key={s}
-            className={`filter-btn ${statusFilter === s ? 'active' : ''}`}
-            onClick={() => setStatusFilter(s)}
+            key={s.key || 'all'}
+            className={`catalog-filter-tab ${statusFilter === s.key ? 'active' : ''}`}
+            onClick={() => setStatusFilter(s.key)}
           >
-            {s ? statusLabel[s] : 'Wszystkie'}
+            {s.label}
           </button>
         ))}
       </div>
 
       {reservations.length === 0 ? (
-        <EmptyState icon="📋" title="Brak rezerwacji" />
+        <EmptyState icon="book" title="Brak rezerwacji" />
       ) : (
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
-              <tr><th>Obiekt</th><th>Użytkownik</th><th>Termin</th><th>Cena</th><th>Status</th><th>Akcje</th></tr>
+              <tr>
+                <th>Obiekt</th>
+                <th>Użytkownik</th>
+                <th>Termin</th>
+                <th>Cena</th>
+                <th>Status</th>
+                <th>Akcje</th>
+              </tr>
             </thead>
             <tbody>
               {reservations.map((r) => (
                 <tr key={r.id}>
-                  <td>{r.facility_name}</td>
-                  <td>{r.first_name} {r.last_name}<br /><small>{r.email}</small></td>
-                  <td>{formatDate(r.start_time)}<br />{formatDate(r.end_time)}</td>
-                  <td>{parseFloat(r.total_price).toFixed(2)} zł</td>
-                  <td><span className={`status-badge ${statusClass[r.status]}`}>{statusLabel[r.status]}</span></td>
+                  <td className="admin-table-name">{r.facility_name}</td>
+                  <td>
+                    {r.first_name} {r.last_name}
+                    <br />
+                    <small className="caps">{r.email}</small>
+                  </td>
+                  <td className="numeric admin-table-time">
+                    {formatDate(r.start_time)}
+                    <br />
+                    {formatDate(r.end_time)}
+                  </td>
+                  <td className="numeric">{parseFloat(r.total_price).toFixed(2)} zł</td>
+                  <td>
+                    <span className={`status-badge ${statusClass[r.status]}`}>
+                      {statusLabel[r.status]}
+                    </span>
+                  </td>
                   <td>
                     {r.status !== 'cancelled' && (
-                      <button className="btn btn-danger btn-sm" onClick={() => handleCancel(r.id)}>Anuluj</button>
+                      <button className="btn btn-danger btn-sm" onClick={() => handleCancel(r.id)}>
+                        Anuluj
+                      </button>
                     )}
                   </td>
                 </tr>
@@ -325,22 +405,27 @@ export default function AdminPanel() {
 
   return (
     <div className="page">
-      <div className="page-header">
+      <header className="page-header">
+        <span className="caps">Panel administratora</span>
         <h1>Panel administratora</h1>
-        <p className="page-subtitle">Zarządzaj kategoriami, obiektami i rezerwacjami</p>
-      </div>
+        <p className="page-subtitle">
+          Zarządzaj kategoriami, obiektami i rezerwacjami.
+        </p>
+      </header>
 
-      <div className="admin-tabs">
+      <nav className="admin-tabs" role="tablist">
         {tabs.map((t) => (
           <button
             key={t.key}
+            role="tab"
+            aria-selected={tab === t.key}
             className={`admin-tab ${tab === t.key ? 'active' : ''}`}
             onClick={() => setTab(t.key)}
           >
-            {t.label}
+            <span>{t.label}</span>
           </button>
         ))}
-      </div>
+      </nav>
 
       <div className="admin-content">
         {tab === 'categories' && <CategoriesTab />}

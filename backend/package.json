@@ -1,7 +1,7 @@
 {
   "name": "sportreserve-backend",
   "version": "1.0.0",
-  "description": "Backend API dla systemu rezerwacji obiektów sportowych SportReserve",
+  "description": "Backend API dla systemu rezerwacji obiektów sportowych RezSport",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

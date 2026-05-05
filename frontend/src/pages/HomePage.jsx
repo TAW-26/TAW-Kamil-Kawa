@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { categoriesAPI } from '../api/api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Icon from '../icons/Icon';
+import { categoryIconName } from '../icons/categoryIconName';
 import './HomePage.css';
 
 export default function HomePage() {
@@ -15,69 +17,102 @@ export default function HomePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const categoryIcons = {
-    'Orlik': '⚽', 'Kort tenisowy': '🎾', 'Hala sportowa': '🏀',
-    'Basen': '🏊', 'Siłownia': '💪',
-  };
-
   return (
-    <div className="home">
-      <section className="hero">
-        <div className="hero-content">
-          <h1>Zarezerwuj obiekt sportowy <span className="hero-accent">online</span></h1>
-          <p className="hero-subtitle">
-            Przeglądaj dostępne obiekty sportowe i rezerwuj terminy w kilka kliknięć.
-            Bez telefonów, bez czekania.
+    <div className="cover">
+      <section className="cover-hero">
+        <div className="cover-hero-inner">
+          <div className="cover-eyebrow">
+            <span>Rezerwacja obiektów sportowych</span>
+          </div>
+          <h1 className="cover-title">
+            Zarezerwuj obiekt
+            <span className="cover-title-em"> sportowy</span>
+          </h1>
+          <p className="cover-lede">
+            Spis miejskich boisk, hal, kortów i pływalni z możliwością
+            rezerwacji terminu — bez telefonów, bez papierowych grafików,
+            wszystko online w jednym miejscu.
           </p>
-          <Link to="/facilities" className="btn btn-primary btn-lg">
-            Przeglądaj obiekty
-          </Link>
+          <div className="cover-actions">
+            <Link to="/facilities" className="btn btn-primary btn-lg">
+              Przeglądaj obiekty
+              <Icon name="arrow" size={14} />
+            </Link>
+            <Link to="/register" className="btn btn-outline btn-lg">
+              Załóż konto
+            </Link>
+          </div>
         </div>
       </section>
 
-      <section className="categories-section">
-        <h2>Kategorie obiektów</h2>
-        <p className="section-subtitle">Wybierz kategorię i znajdź idealny obiekt dla siebie</p>
+      <hr className="rule-thick" />
+
+      <section className="cover-section">
+        <header className="cover-section-head">
+          <span className="caps">Dostępne kategorie</span>
+          <h2>Kategorie obiektów</h2>
+          <p className="cover-section-lede">
+            Wybierz kategorię, aby przejść do listy obiektów sportowych.
+          </p>
+        </header>
+
         {loading ? (
           <LoadingSpinner />
+        ) : categories.length === 0 ? (
+          <p className="cover-empty">Brak kategorii do wyświetlenia.</p>
         ) : (
-          <div className="categories-grid">
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                to={`/facilities?category=${cat.id}`}
-                className="category-card"
-              >
-                <span className="category-icon">
-                  {categoryIcons[cat.name] || '🏟️'}
-                </span>
-                <span className="category-name">{cat.name}</span>
-              </Link>
+          <ol className="cover-toc">
+            {categories.map((cat, idx) => (
+              <li key={cat.id} className="cover-toc-item">
+                <Link to={`/facilities?category=${cat.id}`} className="cover-toc-link">
+                  <span className="cover-toc-num numeric">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <span className="cover-toc-name">{cat.name}</span>
+                  <span className="cover-toc-leader" aria-hidden="true" />
+                  <span className="cover-toc-icon">
+                    <Icon name={categoryIconName(cat.name)} size={26} />
+                  </span>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ol>
         )}
       </section>
 
-      <section className="features-section">
-        <h2>Jak to działa?</h2>
-        <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-number">1</div>
-            <h3>Wybierz obiekt</h3>
-            <p>Przeglądaj listę dostępnych obiektów sportowych i wybierz interesujący Cię.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-number">2</div>
-            <h3>Zarezerwuj termin</h3>
-            <p>Wybierz datę i godziny. System automatycznie obliczy cenę.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-number">3</div>
-            <h3>Gotowe!</h3>
-            <p>Twoja rezerwacja jest potwierdzona. Zarządzaj nią w panelu użytkownika.</p>
-          </div>
+      <hr className="rule-thick" />
+
+      <section className="cover-section">
+        <header className="cover-section-head">
+          <span className="caps">Instrukcja</span>
+          <h2>Jak zarezerwować obiekt</h2>
+        </header>
+
+        <div className="cover-howto">
+          {[
+            { title: 'Wybierz obiekt', body: 'Przeglądaj listę obiektów sportowych. Filtruj po kategorii, jeśli wiesz czego szukasz.' },
+            { title: 'Zaplanuj termin', body: 'Na stronie obiektu wskaż datę rozpoczęcia i zakończenia. Wycenę zobaczysz od razu.' },
+            { title: 'Zarezerwuj', body: 'Po potwierdzeniu rezerwacja trafia do zakładki „Moje rezerwacje" ze statusem oczekującym.' },
+          ].map((step, idx) => (
+            <article key={step.title} className="cover-step">
+              <span className="cover-step-num">{idx + 1}.</span>
+              <div className="cover-step-body">
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
+
+      <hr className="rule" />
+
+      <footer className="cover-footer">
+        <p className="caps">
+          RezSport · System rezerwacji obiektów sportowych · {new Date().getFullYear()} ·
+          Autor: K. Kawa
+        </p>
+      </footer>
     </div>
   );
 }
