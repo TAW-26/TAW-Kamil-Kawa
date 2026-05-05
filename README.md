@@ -1,11 +1,8 @@
-# RezSport — Almanach Obiektów Sportowych
+# RezSport — Rezerwacja Obiektów Sportowych
 
 ## Opis projektu
 **RezSport** to aplikacja webowa umożliwiająca użytkownikom przeglądanie obiektów sportowych oraz rezerwowanie terminów online. System wspiera podział na role (Użytkownik / Administrator) i zastępuje tradycyjne metody rezerwacji nowoczesnym interfejsem dostępnym z poziomu przeglądarki.
 
-Frontend utrzymany jest w stylu **„Almanach Vintage"** — DM Serif Display + Newsreader + IBM Plex Mono, paleta sepii i ceglanego czerwonego, hairline rules zamiast kart-pudełek, własne line-art SVG zamiast emoji.
-
-> **Uwaga porządkowa:** wewnętrzne nazewnictwo backendu (baza `sportreserve`, prefiks `/api`) zostało celowo niezmienione, aby uniknąć rozjazdu z istniejącą konfiguracją deweloperską i testami. Rebrand dotyczy warstwy widzianej przez użytkownika (UI, dokumentacja, tytuły, logo).
 
 ## Użyte technologie
 * **Frontend:** React.js (Vite) + React Router + Axios
@@ -39,7 +36,7 @@ TAW-Kamil-Kawa/
 │   │   ├── api/                  # Warstwa komunikacji z API
 │   │   ├── components/           # Komponenty współdzielone
 │   │   ├── context/              # Kontekst autoryzacji
-│   │   ├── icons/                # Inline SVG line-art (Almanach Vintage)
+│   │   ├── icons/                # Inline SVG line-art ikony
 │   │   ├── pages/                # Widoki / strony aplikacji
 │   │   ├── App.jsx               # Routing aplikacji
 │   │   ├── index.css             # Design system (OKLCH, fonty, buttony)
@@ -49,17 +46,27 @@ TAW-Kamil-Kawa/
 └── README.md
 ```
 
-## System wizualny (skrót)
+## Funkcjonalności
 
-| Element | Wartość |
-|---------|---------|
-| Display font | DM Serif Display |
-| Body font | Newsreader |
-| Mono / numeric | IBM Plex Mono |
-| Tło | `oklch(96% 0.018 80)` — kremowy papier |
-| Tekst główny | `oklch(22% 0.035 50)` — ciepły brąz |
-| Primary | `oklch(52% 0.160 35)` — ceglany czerwony |
-| Accent | `oklch(38% 0.100 150)` — butelkowa zieleń |
+### Użytkownik (rola: user)
+- Rejestracja i logowanie (JWT)
+- Przeglądanie obiektów sportowych z filtrowaniem po kategorii
+- Rezerwacja obiektu na wybrany termin (status: oczekująca)
+- Podgląd swoich rezerwacji w zakładce „Moje rezerwacje"
+- Anulowanie własnych rezerwacji
+
+### Administrator (rola: admin)
+- Zarządzanie kategoriami obiektów (dodawanie)
+- Zarządzanie obiektami sportowymi (dodawanie, edycja, dezaktywacja)
+- Podgląd wszystkich rezerwacji z filtrowaniem po statusie
+- Anulowanie dowolnych rezerwacji
+
+### Statusy rezerwacji
+| Status | Opis |
+|--------|------|
+| **Oczekująca** (pending) | Nowa rezerwacja, czeka na potwierdzenie |
+| **Potwierdzona** (confirmed) | Rezerwacja została potwierdzona |
+| **Anulowana** (cancelled) | Rezerwacja anulowana przez użytkownika lub admina |
 
 Pełny opis: [docs/ui.md](docs/ui.md).
 
@@ -121,7 +128,14 @@ npm run dev
 - **Backend API:** `http://localhost:3000`
 - **Frontend:** `http://localhost:5173`
 
-### 6. Uruchomienie testów
+### 6. Konta testowe (po załadowaniu seed)
+
+| Rola | Email | Hasło |
+|------|-------|-------|
+| **Admin** | kamilkawa200@gmail.com | K@puczino21 |
+| **Użytkownik** | jan@example.com | K@puczino21 |
+
+### 7. Uruchomienie testów
 ```bash
 cd backend
 npm test
@@ -140,9 +154,12 @@ npm test
 | POST | `/api/facilities` | Admin | Dodanie obiektu |
 | PUT | `/api/facilities/:id` | Admin | Edycja obiektu |
 | DELETE | `/api/facilities/:id` | Admin | Dezaktywacja obiektu |
-| POST | `/api/reservations` | Zalogowany | Utworzenie rezerwacji |
+| POST | `/api/reservations` | Zalogowany | Utworzenie rezerwacji (status: pending) |
 | GET | `/api/reservations/my` | Zalogowany | Moje rezerwacje |
 | PATCH | `/api/reservations/:id/cancel` | Właściciel/Admin | Anulowanie rezerwacji |
 | GET | `/api/reservations` | Admin | Wszystkie rezerwacje |
 
 Pełna dokumentacja: [docs/api.md](docs/api.md).
+
+## Autor
+**Kamil Kawa** — Projekt na przedmiot TAW (Technologie Aplikacji Webowych)
