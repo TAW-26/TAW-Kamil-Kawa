@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { facilitiesAPI, reservationsAPI } from '../api/api';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import Icon from '../icons/Icon';
@@ -35,16 +35,16 @@ export default function FacilityDetailsPage() {
 
   const minDateTime = useMemo(() => getMinDateTime(), []);
 
-  const fetchFacility = () => {
+  const fetchFacility = useCallback(() => {
     setLoading(true);
     setError(null);
     facilitiesAPI.getById(id)
       .then((res) => setFacility(res.data))
       .catch(() => setError('Nie udało się pobrać danych obiektu.'))
       .finally(() => setLoading(false));
-  };
+  }, [id]);
 
-  useEffect(() => { fetchFacility(); }, [id]);
+  useEffect(() => { fetchFacility(); }, [fetchFacility]);
 
   const calculatePrice = () => {
     if (!startTime || !endTime || !facility) return null;

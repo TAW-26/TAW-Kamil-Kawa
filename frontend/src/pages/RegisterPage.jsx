@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import './AuthPages.css';
 
 export default function RegisterPage() {
@@ -38,7 +38,7 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const { confirmPassword, ...data } = form;
+      const { confirmPassword: _confirmPassword, ...data } = form;
       await register(data);
       navigate('/');
     } catch (err) {

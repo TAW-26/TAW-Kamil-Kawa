@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { facilitiesAPI, categoriesAPI } from '../api/api';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -16,7 +16,7 @@ export default function FacilitiesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedCategory = searchParams.get('category') || '';
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     setLoading(true);
     setError(null);
 
@@ -30,9 +30,10 @@ export default function FacilitiesPage() {
       })
       .catch(() => setError('Nie udało się pobrać danych.'))
       .finally(() => setLoading(false));
-  };
+  }, [selectedCategory]);
 
-  useEffect(() => { fetchData(); }, [selectedCategory]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- canonical fetch-on-mount pattern
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleCategoryChange = (catId) => {
     if (catId) {

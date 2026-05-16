@@ -1,28 +1,35 @@
 const pool = require('../config/db');
 
-// POST /api/reservations - Utworzenie nowej rezerwacji (zalogowany użytkownik)
+const MS_PER_HOUR = 1000 * 60 * 60;
+
 const create = async (req, res, next) => {
   try {
-    const user_id = req.user.id;
+    const userId = req.user.id;
     const { facility_id, start_time, end_time } = req.body;
 
-    // Walidacja danych wejściowych
     if (!facility_id || !start_time || !end_time) {
-      return res.status(400).json({ error: 'Wymagane pola: facility_id, start_time, end_time' });
+      return res.status(400).json({
+        error: 'Wymagane pola: facility_id, start_time, end_time',
+      });
     }
 
     const startDate = new Date(start_time);
     const endDate = new Date(end_time);
 
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+      return res.status(400).json({ error: 'Nieprawidłowy format daty' });
+    }
+
     if (endDate <= startDate) {
-      return res.status(400).json({ error: 'Czas zakończenia musi być późniejszy niż czas rozpoczęcia' });
+      return res.status(400).json({
+        error: 'Czas zakończenia musi być późniejszy niż czas rozpoczęcia',
+      });
     }
 
     if (startDate < new Date()) {
       return res.status(400).json({ error: 'Nie można rezerwować terminów w przeszłości' });
     }
 
-    // Sprawdzenie czy obiekt istnieje i jest aktywny
     const facilityResult = await pool.query(
       'SELECT * FROM facilities WHERE id = $1 AND is_active = true',
       [facility_id]
@@ -34,44 +41,41 @@ const create = async (req, res, next) => {
 
     const facility = facilityResult.rows[0];
 
-    // Sprawdzenie kolizji terminów (czy termin nie jest już zajęty)
-    const conflictResult = await pool.query(
+    const conflict = await pool.query(
       `SELECT id FROM reservations
        WHERE facility_id = $1
          AND status != 'cancelled'
          AND start_time < $3
-         AND end_time > $2`,
+         AND end_time   > $2`,
       [facility_id, start_time, end_time]
     );
 
-    if (conflictResult.rows.length > 0) {
+    if (conflict.rows.length > 0) {
       return res.status(409).json({ error: 'Wybrany termin jest już zarezerwowany' });
     }
 
-    // Obliczenie ceny (godziny * cena za godzinę)
-    const hours = (endDate - startDate) / (1000 * 60 * 60);
-    const total_price = (hours * parseFloat(facility.price_per_hour)).toFixed(2);
+    const hours = (endDate - startDate) / MS_PER_HOUR;
+    const totalPrice = (hours * parseFloat(facility.price_per_hour)).toFixed(2);
 
-    // Tworzenie rezerwacji
     const result = await pool.query(
       `INSERT INTO reservations (user_id, facility_id, start_time, end_time, status, total_price)
-       VALUES ($1, $2, $3, $4, 'pending', $5) RETURNING *`,
-      [user_id, facility_id, start_time, end_time, total_price]
+       VALUES ($1, $2, $3, $4, 'confirmed', $5)
+       RETURNING *`,
+      [userId, facility_id, start_time, end_time, totalPrice]
     );
 
     res.status(201).json({
       message: 'Rezerwacja utworzona pomyślnie',
-      reservation: result.rows[0]
+      reservation: result.rows[0],
     });
   } catch (err) {
     next(err);
   }
 };
 
-// GET /api/reservations/my - Moje rezerwacje (zalogowany użytkownik)
 const getMy = async (req, res, next) => {
   try {
-    const user_id = req.user.id;
+    const userId = req.user.id;
 
     const result = await pool.query(
       `SELECT r.*, f.name AS facility_name, f.location AS facility_location
@@ -79,7 +83,7 @@ const getMy = async (req, res, next) => {
        JOIN facilities f ON r.facility_id = f.id
        WHERE r.user_id = $1
        ORDER BY r.start_time DESC`,
-      [user_id]
+      [userId]
     );
 
     res.json(result.rows);
@@ -88,13 +92,11 @@ const getMy = async (req, res, next) => {
   }
 };
 
-// PATCH /api/reservations/:id/cancel - Anulowanie rezerwacji (klient anuluje swoją)
 const cancel = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const user_id = req.user.id;
+    const userId = req.user.id;
 
-    // Pobierz rezerwację
     const reservationResult = await pool.query(
       'SELECT * FROM reservations WHERE id = $1',
       [id]
@@ -106,8 +108,10 @@ const cancel = async (req, res, next) => {
 
     const reservation = reservationResult.rows[0];
 
-    // Sprawdź czy to rezerwacja tego użytkownika (admin może anulować wszystkie)
-    if (reservation.user_id !== user_id && req.user.role !== 'admin') {
+    const isOwner = reservation.user_id === userId;
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({ error: 'Nie możesz anulować cudzej rezerwacji' });
     }
 
@@ -115,7 +119,6 @@ const cancel = async (req, res, next) => {
       return res.status(400).json({ error: 'Rezerwacja jest już anulowana' });
     }
 
-    // Anulowanie
     const result = await pool.query(
       `UPDATE reservations SET status = 'cancelled' WHERE id = $1 RETURNING *`,
       [id]
@@ -123,24 +126,27 @@ const cancel = async (req, res, next) => {
 
     res.json({
       message: 'Rezerwacja została anulowana',
-      reservation: result.rows[0]
+      reservation: result.rows[0],
     });
   } catch (err) {
     next(err);
   }
 };
 
-// GET /api/reservations - Wszystkie rezerwacje (tylko admin)
 const getAll = async (req, res, next) => {
   try {
     const { facility_id, status } = req.query;
 
     let query = `
-      SELECT r.*, f.name AS facility_name, u.first_name, u.last_name, u.email
+      SELECT r.*,
+             f.name        AS facility_name,
+             u.first_name,
+             u.last_name,
+             u.email
       FROM reservations r
       JOIN facilities f ON r.facility_id = f.id
-      JOIN users u ON r.user_id = u.id
-      WHERE 1=1
+      JOIN users      u ON r.user_id     = u.id
+      WHERE 1 = 1
     `;
     const params = [];
 

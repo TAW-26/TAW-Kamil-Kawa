@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { categoriesAPI, facilitiesAPI, reservationsAPI } from '../api/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
@@ -12,16 +12,16 @@ function CategoriesTab() {
   const [newName, setNewName] = useState('');
   const [adding, setAdding] = useState(false);
 
-  const fetch = () => {
+  const loadCategories = useCallback(() => {
     setLoading(true);
     setError(null);
     categoriesAPI.getAll()
       .then((res) => setCategories(res.data))
       .catch(() => setError('Nie udało się pobrać kategorii.'))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => { loadCategories(); }, [loadCategories]);
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ function CategoriesTab() {
   };
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={fetch} />;
+  if (error) return <ErrorMessage message={error} onRetry={loadCategories} />;
 
   return (
     <div>
@@ -93,7 +93,7 @@ function FacilitiesTab() {
   const [form, setForm] = useState({ category_id: '', name: '', description: '', location: '', price_per_hour: '' });
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchAll = () => {
+  const loadFacilities = useCallback(() => {
     setLoading(true);
     setError(null);
     Promise.all([facilitiesAPI.getAll(), categoriesAPI.getAll()])
@@ -103,9 +103,9 @@ function FacilitiesTab() {
       })
       .catch(() => setError('Nie udało się pobrać danych.'))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => { loadFacilities(); }, [loadFacilities]);
 
   const resetForm = () => {
     setForm({ category_id: '', name: '', description: '', location: '', price_per_hour: '' });
@@ -157,7 +157,7 @@ function FacilitiesTab() {
   const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={fetchAll} />;
+  if (error) return <ErrorMessage message={error} onRetry={loadFacilities} />;
 
   return (
     <div>
@@ -287,7 +287,7 @@ function ReservationsTab() {
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
 
-  const fetchAll = () => {
+  const loadReservations = useCallback(() => {
     setLoading(true);
     setError(null);
     const params = {};
@@ -296,9 +296,10 @@ function ReservationsTab() {
       .then((res) => setReservations(res.data))
       .catch(() => setError('Nie udało się pobrać rezerwacji.'))
       .finally(() => setLoading(false));
-  };
+  }, [statusFilter]);
 
-  useEffect(() => { fetchAll(); }, [statusFilter]);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- canonical fetch-on-mount pattern
+  useEffect(() => { loadReservations(); }, [loadReservations]);
 
   const handleCancel = async (id) => {
     if (!window.confirm('Anulować tę rezerwację?')) return;
@@ -321,7 +322,7 @@ function ReservationsTab() {
   const statusClass = { confirmed: 'status-confirmed', cancelled: 'status-cancelled', pending: 'status-pending' };
 
   if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={fetchAll} />;
+  if (error) return <ErrorMessage message={error} onRetry={loadReservations} />;
 
   return (
     <div>

@@ -24,8 +24,8 @@ app.get('/', (req, res) => {
       auth: '/api/auth',
       categories: '/api/categories',
       facilities: '/api/facilities',
-      reservations: '/api/reservations'
-    }
+      reservations: '/api/reservations',
+    },
   });
 });
 
