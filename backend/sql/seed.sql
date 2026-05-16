@@ -1,4 +1,4 @@
--- SportReserve - Dane testowe (seed)
+-- RezSport - Dane testowe (seed)
 -- Hasło dla obu użytkowników: K@puczino21 (bcrypt hash)
 
 INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES

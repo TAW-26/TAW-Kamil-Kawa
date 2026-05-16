@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { reservationsAPI } from '../api/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
@@ -39,16 +39,16 @@ export default function MyReservationsPage() {
   const [error, setError] = useState(null);
   const [cancellingId, setCancellingId] = useState(null);
 
-  const fetchReservations = () => {
+  const fetchReservations = useCallback(() => {
     setLoading(true);
     setError(null);
     reservationsAPI.getMy()
       .then((res) => setReservations(res.data))
       .catch(() => setError('Nie udało się pobrać rezerwacji.'))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
-  useEffect(() => { fetchReservations(); }, []);
+  useEffect(() => { fetchReservations(); }, [fetchReservations]);
 
   const handleCancel = async (id) => {
     if (!window.confirm('Czy na pewno chcesz anulować tę rezerwację?')) return;

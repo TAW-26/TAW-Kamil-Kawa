@@ -1,6 +1,5 @@
 const pool = require('../config/db');
 
-// GET /api/categories - Lista wszystkich kategorii
 const getAll = async (req, res, next) => {
   try {
     const result = await pool.query('SELECT * FROM categories ORDER BY id');
@@ -10,7 +9,6 @@ const getAll = async (req, res, next) => {
   }
 };
 
-// POST /api/categories - Dodanie nowej kategorii (tylko admin)
 const create = async (req, res, next) => {
   try {
     const { name } = req.body;

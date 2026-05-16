@@ -1,16 +1,16 @@
 const pool = require('../config/db');
 
-// GET /api/facilities - Lista aktywnych obiektów (z opcjonalnym filtrowaniem po kategorii)
+const FACILITY_WITH_CATEGORY = `
+  SELECT f.*, c.name AS category_name
+  FROM facilities f
+  LEFT JOIN categories c ON f.category_id = c.id
+`;
+
 const getAll = async (req, res, next) => {
   try {
     const { category_id } = req.query;
 
-    let query = `
-      SELECT f.*, c.name AS category_name
-      FROM facilities f
-      LEFT JOIN categories c ON f.category_id = c.id
-      WHERE f.is_active = true
-    `;
+    let query = `${FACILITY_WITH_CATEGORY} WHERE f.is_active = true`;
     const params = [];
 
     if (category_id) {
@@ -27,16 +27,12 @@ const getAll = async (req, res, next) => {
   }
 };
 
-// GET /api/facilities/:id - Szczegóły jednego obiektu
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const result = await pool.query(
-      `SELECT f.*, c.name AS category_name
-       FROM facilities f
-       LEFT JOIN categories c ON f.category_id = c.id
-       WHERE f.id = $1`,
+      `${FACILITY_WITH_CATEGORY} WHERE f.id = $1`,
       [id]
     );
 
@@ -50,19 +46,26 @@ const getById = async (req, res, next) => {
   }
 };
 
-// POST /api/facilities - Dodanie nowego obiektu (tylko admin)
 const create = async (req, res, next) => {
   try {
     const { category_id, name, description, location, price_per_hour, image_url } = req.body;
 
-    if (!name || !price_per_hour) {
+    if (!name || price_per_hour === undefined || price_per_hour === null) {
       return res.status(400).json({ error: 'Nazwa i cena za godzinę są wymagane' });
     }
 
     const result = await pool.query(
       `INSERT INTO facilities (category_id, name, description, location, price_per_hour, image_url)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [category_id || null, name, description || null, location || null, price_per_hour, image_url || null]
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        category_id || null,
+        name,
+        description || null,
+        location || null,
+        price_per_hour,
+        image_url || null,
+      ]
     );
 
     res.status(201).json(result.rows[0]);
@@ -71,21 +74,28 @@ const create = async (req, res, next) => {
   }
 };
 
-// PUT /api/facilities/:id - Edycja obiektu (tylko admin)
 const update = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { category_id, name, description, location, price_per_hour, image_url, is_active } = req.body;
+    const {
+      category_id,
+      name,
+      description,
+      location,
+      price_per_hour,
+      image_url,
+      is_active,
+    } = req.body;
 
     const result = await pool.query(
       `UPDATE facilities
-       SET category_id = COALESCE($1, category_id),
-           name = COALESCE($2, name),
-           description = COALESCE($3, description),
-           location = COALESCE($4, location),
+       SET category_id    = COALESCE($1, category_id),
+           name           = COALESCE($2, name),
+           description    = COALESCE($3, description),
+           location       = COALESCE($4, location),
            price_per_hour = COALESCE($5, price_per_hour),
-           image_url = COALESCE($6, image_url),
-           is_active = COALESCE($7, is_active)
+           image_url      = COALESCE($6, image_url),
+           is_active      = COALESCE($7, is_active)
        WHERE id = $8
        RETURNING *`,
       [category_id, name, description, location, price_per_hour, image_url, is_active, id]
@@ -101,7 +111,6 @@ const update = async (req, res, next) => {
   }
 };
 
-// DELETE /api/facilities/:id - Dezaktywacja obiektu (soft delete, tylko admin)
 const remove = async (req, res, next) => {
   try {
     const { id } = req.params;

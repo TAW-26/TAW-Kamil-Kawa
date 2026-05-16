@@ -1,4 +1,4 @@
--- SportReserve - Inicjalizacja bazy danych
+-- RezSport - Inicjalizacja bazy danych
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -26,8 +26,6 @@ CREATE TABLE IF NOT EXISTS facilities (
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-ALTER TABLE facilities ADD COLUMN IF NOT EXISTS image_url TEXT;
 
 CREATE TABLE IF NOT EXISTS reservations (
     id SERIAL PRIMARY KEY,
