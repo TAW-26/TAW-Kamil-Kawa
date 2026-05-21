@@ -19,8 +19,7 @@ TAW-Kamil-Kawa/
 │   ├── use-cases.md              # Przypadki użycia
 │   ├── ERD.png                   # Diagram bazy danych
 │   ├── api.md                    # Dokumentacja API
-│   ├── ui.md                     # Opis UI + design system
-│   └── postman-testing-guide.md  # Instrukcja testowania w Postmanie
+│   └── ui.md                     # Opis UI + design system
 ├── backend/                      # Serwer API
 │   ├── config/                   # Konfiguracja (baza danych)
 │   ├── controllers/              # Logika biznesowa

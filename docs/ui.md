@@ -7,13 +7,13 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 ### Typografia
 | Krój | Zastosowanie |
 |------|--------------|
-| **DM Serif Display** | Tytuły H1/H2, „okładkowy" feel, dropcapy |
+| **DM Serif Display** | Tytuły H1/H2, „okładkowy" feel |
 | **Newsreader** | Body text, opisy obiektów, paragrafy |
-| **IBM Plex Mono** | Liczby, ceny, daty, etykiety w small-caps, „stemple" (`Nº 04`, `MMXXVI`) |
+| **IBM Plex Mono** | Liczby, ceny, daty, etykiety w small-caps |
 
 ### Paleta (OKLCH, tinted neutrals)
 | Token | Wartość | Zastosowanie |
-|-------|---------|--------------|
+|-------|---------|--------------| 
 | `--paper` | `oklch(96% 0.018 80)` | tło bazowe (kremowy papier) |
 | `--paper-deep` | `oklch(92% 0.028 80)` | sekcje wyróżnione, alternujące wiersze |
 | `--ink` | `oklch(22% 0.035 50)` | główny tekst (ciepły brąz, nie czysta czerń) |
@@ -39,11 +39,11 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 **Cel:** Powitanie użytkownika, prezentacja katalogu obiektów jak okładka almanachu.
 
 **Layout:**
-- **Masthead (Navbar):** monogram „RS" + serif `RezSport` + mono podtytuł `ALMANACH OBIEKTÓW · MMXXVI`, hairline rule pod całą belką
-- **Hero:** mono eyebrow `EDYCJA MMXXVI · TOM I`, wielki serif tytuł, krótszy podtytuł, button `Otwórz katalog →`
-- **Sekcja kategorii:** lista 2-kolumnowa z numerami `Nº 01`, nazwa kategorii (serif) i line-art ikoną po prawej; hairline rule między wpisami
-- **Sekcja „Jak korzystać":** 3 kroki z rzymskimi cyframi (`I.`, `II.`, `III.`) w DM Serif Display
-- **Kolofon:** stopka w stylu książki (`Numer · Tom · Wydawca`)
+- **Masthead (Navbar):** ikona SVG logo + serif `RezSport` + mono podtytuł `REZERWACJA OBIEKTÓW SPORTOWYCH`, hairline rule pod całą belką
+- **Hero:** mono eyebrow `Rezerwacja obiektów sportowych`, wielki serif tytuł `Zarezerwuj obiekt sportowy` (z italic akcentem), krótszy podtytuł, dwa buttony: `Przeglądaj obiekty →` (primary) i `Załóż konto` (outline)
+- **Sekcja kategorii:** lista 2-kolumnowa z numerami `01`, `02` itd., nazwa kategorii (serif) i line-art ikoną po prawej; dotted leader line między nazwą a ikoną; hairline rule między wpisami
+- **Sekcja „Jak zarezerwować obiekt":** 3 kroki z liczbami arabskimi (`1.`, `2.`, `3.`) w DM Serif Display
+- **Stopka:** `RezSport · System rezerwacji obiektów sportowych · {rok} · Autor: K. Kawa`
 
 ---
 
@@ -51,8 +51,9 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 **Cel:** Przeglądanie i filtrowanie katalogu obiektów (UC-01).
 
 **Layout:**
+- **Nagłówek strony:** mono caps eyebrow `LISTA OBIEKTÓW`, serif tytuł, italic podtytuł
 - **Filtr kategorii:** zakładkowy z brick underline na aktywnej (zamiast pełnego wypełnienia)
-- **Karty obiektów:** 2px solid `--ink` ramka z pieczątką `Nº {id}` w nagłówku, serif nazwa, mono lokalizacja z ikoną pinezki, sekcja „Cennik" w pseudo-tabeli indeksowej, CTA `Czytaj wpis →`
+- **Karty obiektów:** 2px solid `--ink` ramka z sekwencyjnym numerem `01`, `02`... w nagłówku, serif nazwa, mono lokalizacja z ikoną pinezki, sekcja „Cena / 1 godz." w pseudo-tabeli indeksowej, CTA `Szczegóły i rezerwacja →`
 - **Placeholder:** line-art ikona kategorii w sepia ramce z caption (zamiast emoji-tile)
 - **Stany:** spinner (pulsująca 3-kropkowa linia), empty state z `IconBook`, error state z `IconAlert`
 
@@ -62,11 +63,13 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 **Cel:** Pełne informacje + formularz rezerwacji (UC-04).
 
 **Layout:**
-- **Sepia frame** wokół zdjęcia z caption (jak ilustracja w książce)
-- **Tytuł** w DM Serif Display, dropcap pierwszej litery opisu
-- **„Specyfikacja"** w pseudo-tabeli indeksowej (label mono caps po lewej, wartość serif po prawej, hairline rules między wierszami)
-- **Formularz rezerwacji:** underlined inputy `datetime-local`, label w mono small-caps, „Wycena wstępna" jako pieczątka z brick borderem
-- **Komunikat dla gości:** `IconLock` line-art + serif tytuł + outline button `Zaloguj się`
+- **Link powrotny:** `← Powrót do katalogu`
+- **Nagłówek rozdziału:** mono caps `OBIEKT #{id} · DZIAŁ: {kategoria}`, serif tytuł, lokalizacja z ikoną pinezki
+- **Ilustracja:** sepia frame wokół zdjęcia z caption (jak ilustracja w książce), lub line-art ikona kategorii jeśli brak zdjęcia
+- **Opis:** sekcja z nagłówkiem serif, klasa `chapter-dropcap` na pierwszym akapicie
+- **„Specyfikacja"** w pseudo-tabeli indeksowej (label mono caps po lewej, wartość serif po prawej, hairline rules między wierszami): cena, lokalizacja, dział, status
+- **Formularz rezerwacji:** underlined inputy `datetime-local`, label w mono small-caps, „Wycena wstępna" z podsumowaniem godzin × cena, button `Zarezerwuj termin` (primary, pełna szerokość)
+- **Komunikat dla gości:** `IconLock` line-art + serif tekst + primary button `Zaloguj się` (pełna szerokość)
 
 ---
 
@@ -74,10 +77,12 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 **Cel:** Formularz rejestracji nowego użytkownika (UC-02).
 
 **Layout:**
-- Sepia tło, hairline brick border na karcie, drobne SVG corner ornaments
-- Dwupiętrowy nagłówek: mono caps `FORMULARZ · II` + serif `Rejestracja`
-- Pola: imię, nazwisko, email, hasło, powtórz hasło — wszystkie underlined
-- Walidacja: komunikat błędu z lewym brick border-em
+- Kremowe tło, 2px solid `--ink` border na karcie, wewnętrzna hairline ramka, drobne SVG corner ornaments w `--brick`
+- Dwupiętrowy nagłówek: mono caps `REJESTRACJA` + serif `Rejestracja` + italic podtytuł
+- Pola: imię, nazwisko (w jednym wierszu), email, hasło, powtórz hasło — wszystkie underlined
+- Walidacja: komunikat błędu z lewym brick border-em (`form-error`)
+- Button: `Zarejestruj się` (primary, pełna szerokość)
+- Stopka: „Masz już konto? Zaloguj się" z brick podlinkowaniem
 
 ---
 
@@ -85,9 +90,11 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 **Cel:** Formularz logowania (UC-03, UC-06).
 
 **Layout:**
-- Identyczny styl karty co rejestracja, mono caps `FORMULARZ · I`
+- Identyczny styl karty co rejestracja
+- Dwupiętrowy nagłówek: mono caps `LOGOWANIE` + serif `Logowanie` + italic podtytuł
 - Pola: email, hasło — underlined
-- Link „Nie masz konta? Zarejestruj się" w newsreader z brick podlinkowaniem
+- Button: `Zaloguj się` (primary, pełna szerokość)
+- Stopka: „Nie masz konta? Zarejestruj się" w newsreader z brick podlinkowaniem
 
 ---
 
@@ -95,8 +102,9 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 **Cel:** Historia rezerwacji zalogowanego użytkownika (UC-05).
 
 **Layout:**
-- **Roczniki rezerwacji:** lista oddzielona hairline rules zamiast osobnych kart-pudełek
-- Każdy wpis: po lewej data w mono z `IconClock`, w środku serif nazwa obiektu i lokalizacja, po prawej stempel statusu (`POTWIERDZONA` w bottle-green ramce, `ANULOWANA` w brick), cena mono, button `Anuluj` (outline brick)
+- **Nagłówek strony:** mono caps `MOJE REZERWACJE`, serif tytuł, italic podtytuł
+- **Roczniki rezerwacji:** lista oddzielona hairline rules zamiast osobnych kart-pudełek (klasa `ledger`)
+- Każdy wpis: po lewej data w mono z podziałem dzień/miesiąc/rok, w środku serif nazwa obiektu, lokalizacja z `IconPin` i czas z `IconClock`, po prawej stempel statusu (`POTWIERDZONA` w bottle-green ramce, `ANULOWANA` w brick, `OCZEKUJĄCA` w mustard), cena mono, button `Anuluj` (outline brick)
 - **Stany:** brak rezerwacji (`IconBook`), ładowanie, błąd
 
 ---
@@ -105,10 +113,12 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 **Cel:** Zarządzanie systemem (UC-07, UC-08, UC-09).
 
 **Layout:**
-- **Taby z rzymskimi cyframi:** `I. KATEGORIE · II. OBIEKTY · III. REZERWACJE`, mono caps, brick underline na aktywnej
-- **Tabele:** hairline `<thead>` w mono small-caps, body w newsreader, alternujące wiersze `--paper` / `--paper-deep`
+- **Nagłówek strony:** mono caps `PANEL ADMINISTRATORA`, serif tytuł, italic podtytuł
+- **Taby:** `Kategorie`, `Obiekty`, `Rezerwacje` — mono caps, brick underline na aktywnej
+- **Tabele:** hairline `<thead>` w mono small-caps, body w newsreader, alternujące wiersze
 - **Formularze inline:** underlined inputy, outline buttony hover invert
 - **Status badges:** spójne z `MyReservationsPage`
+- **Filtry rezerwacji:** zakładkowy filtr po statusie (Wszystkie / Potwierdzone / Anulowane / Oczekujące)
 
 ---
 
@@ -116,9 +126,9 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 
 | Komponent | Opis |
 |-----------|------|
-| **Navbar** | Vintage masthead, monogram RS + serif nazwa + mono podtytuł, hairline rule, linki w mono caps |
+| **Navbar** | Vintage masthead, SVG logo + serif nazwa + mono podtytuł, hairline rule, linki w mono caps |
 | **LoadingSpinner** | Pulsująca pozioma linia 3-kropkowa w stylu prasa drukarska (animacja `opacity`) |
-| **ErrorMessage** | `IconAlert` + serif tytuł + brick outline button „Spróbuj ponownie" |
+| **ErrorMessage** | `IconAlert` + serif tytuł + outline button „Spróbuj ponownie" |
 | **EmptyState** | `Icon` line-art (book/clock/...) + serif tytuł + mono opis |
 | **ProtectedRoute** | Wrapper przekierowujący niezalogowanych na `/login` |
 | **Icon** | Wrapper po nazwie ikony, mapuje line-art SVG z `frontend/src/icons/` |

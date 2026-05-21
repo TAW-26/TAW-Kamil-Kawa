@@ -13,19 +13,19 @@ Głównym celem projektu jest dostarczenie narzędzia, które zautomatyzuje proc
 
 ### Moduł Użytkownika
 * **Rejestracja i logowanie:** Tworzenie konta, autoryzacja za pomocą tokenów (JWT).
-* **Przeglądanie obiektów:** Lista dostępnych boisk wraz z opisem, zdjęciem i cennikiem.
-* **Wyszukiwanie i filtrowanie:** Filtrowanie po typie obiektu (np. „tenis”, „piłka nożna”).
-* **System rezerwacji:** Wybór wolnego terminu z kalendarza i dokonanie rezerwacji.
-* **Profil użytkownika:** Podgląd historii swoich rezerwacji oraz możliwość odwołania nadchodzącego terminu.
+* **Przeglądanie obiektów:** Lista dostępnych obiektów sportowych wraz z opisem, ikoną kategorii i cennikiem.
+* **Filtrowanie:** Filtrowanie po kategorii obiektu (np. „Kort tenisowy", „Orlik", „Basen").
+* **System rezerwacji:** Wybór terminu za pomocą pól daty i godziny (datetime-local), automatyczne wyliczenie ceny.
+* **Moje rezerwacje:** Podgląd historii swoich rezerwacji oraz możliwość anulowania.
 
 ### Moduł Administratora
-* **Zarządzanie obiektami (CRUD):** Dodawanie nowych boisk, edycja danych, usuwanie obiektów z oferty.
-* **Zarządzanie grafikiem:** Możliwość ręcznego blokowania terminów (np. na czas konserwacji).
-* **Podgląd wszystkich rezerwacji:** Lista wszystkich zapisów w systemie z możliwością filtrowania po dacie lub obiekcie.
+* **Zarządzanie kategoriami:** Dodawanie nowych kategorii obiektów.
+* **Zarządzanie obiektami (CRUD):** Dodawanie nowych obiektów, edycja danych, dezaktywacja obiektów z oferty (soft delete).
+* **Nadzór nad rezerwacjami:** Lista wszystkich rezerwacji w systemie z filtrowaniem po statusie, możliwość administracyjnego anulowania.
 
-## 4. Proponowane technologie
-* **Frontend:** React.js
+## 4. Użyte technologie
+* **Frontend:** React.js (Vite) + React Router + Axios
 * **Backend:** Node.js z frameworkiem Express.js
 * **Baza danych:** PostgreSQL
 * **Autentykacja:** JSON Web Token (JWT)
-* **Dokumentacja API:** Swagger / Postman
+* **Testy:** Jest + Supertest (testy automatyczne API)

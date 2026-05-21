@@ -213,7 +213,7 @@ Wykonuje "soft delete" – ustawia `is_active = false`.
 System automatycznie:
 - sprawdza kolizje terminów
 - oblicza `total_price` na podstawie czasu i `price_per_hour`
-- ustawia status na `confirmed`
+- ustawia status na `pending`
 
 **Odpowiedź (201):**
 ```json
@@ -225,7 +225,7 @@ System automatycznie:
     "facility_id": 1,
     "start_time": "2026-04-10T10:00:00.000Z",
     "end_time": "2026-04-10T12:00:00.000Z",
-    "status": "confirmed",
+    "status": "pending",
     "total_price": "240.00",
     "created_at": "2026-03-25T10:00:00.000Z"
   }
