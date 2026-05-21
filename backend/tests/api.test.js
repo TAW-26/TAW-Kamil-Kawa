@@ -338,7 +338,7 @@ describe('Facilities — obiekty sportowe', () => {
 // ===========================================================================
 
 describe('Reservations — rezerwacje', () => {
-  test('POST /api/reservations → user tworzy rezerwację (status confirmed)', async () => {
+  test('POST /api/reservations → user tworzy rezerwację (status pending)', async () => {
     const res = await request(app)
       .post('/api/reservations')
       .set(auth(state.userToken))
@@ -349,7 +349,7 @@ describe('Reservations — rezerwacje', () => {
       });
     expect(res.statusCode).toBe(201);
     expect(res.body.reservation).toHaveProperty('id');
-    expect(res.body.reservation.status).toBe('confirmed');
+    expect(res.body.reservation.status).toBe('pending');
     expect(parseFloat(res.body.reservation.total_price)).toBe(240);
     state.reservationId = res.body.reservation.id;
   });
@@ -458,12 +458,12 @@ describe('Reservations — rezerwacje', () => {
     expect(res.body.every((r) => r.facility_id === state.facilityId)).toBe(true);
   });
 
-  test('GET /api/reservations?status=confirmed → admin filtruje po statusie', async () => {
+  test('GET /api/reservations?status=pending → admin filtruje po statusie', async () => {
     const res = await request(app)
-      .get('/api/reservations?status=confirmed')
+      .get('/api/reservations?status=pending')
       .set(auth(state.adminToken));
     expect(res.statusCode).toBe(200);
-    expect(res.body.every((r) => r.status === 'confirmed')).toBe(true);
+    expect(res.body.every((r) => r.status === 'pending')).toBe(true);
   });
 
   test('GET /api/reservations → 403 dla zwykłego usera', async () => {
