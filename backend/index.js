@@ -3,6 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const errorHandler = require('./middleware/errorHandler');
+const metricsMiddleware = require('./middleware/metricsMiddleware');
+const { register } = require('./metrics');
 const { initializeDatabase } = require('./config/db');
 
 const authRoutes = require('./routes/auth');
@@ -15,6 +17,15 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
+
+// Middleware metryk — MUSI być PRZED routerami!
+app.use(metricsMiddleware);
+
+// Endpoint /metrics dla Prometheusa
+app.get('/metrics', async (_req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
 
 app.get('/', (req, res) => {
   res.json({
@@ -46,6 +57,7 @@ if (require.main === module) {
       app.listen(PORT, () => {
         console.log(`Serwer RezSport działa na porcie ${PORT}`);
         console.log(`Otwórz: http://localhost:${PORT}`);
+        console.log(`Metryki: http://localhost:${PORT}/metrics`);
       });
     })
     .catch((err) => {

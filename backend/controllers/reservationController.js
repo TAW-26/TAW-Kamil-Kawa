@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const { apiErrorsTotal } = require('../metrics');
 
 const MS_PER_HOUR = 1000 * 60 * 60;
 
@@ -8,6 +9,7 @@ const create = async (req, res, next) => {
     const { facility_id, start_time, end_time } = req.body;
 
     if (!facility_id || !start_time || !end_time) {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({
         error: 'Wymagane pola: facility_id, start_time, end_time',
       });
@@ -17,16 +19,19 @@ const create = async (req, res, next) => {
     const endDate = new Date(end_time);
 
     if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({ error: 'Nieprawidłowy format daty' });
     }
 
     if (endDate <= startDate) {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({
         error: 'Czas zakończenia musi być późniejszy niż czas rozpoczęcia',
       });
     }
 
     if (startDate < new Date()) {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({ error: 'Nie można rezerwować terminów w przeszłości' });
     }
 
@@ -36,6 +41,7 @@ const create = async (req, res, next) => {
     );
 
     if (facilityResult.rows.length === 0) {
+      apiErrorsTotal.inc({ type: 'not_found' });
       return res.status(404).json({ error: 'Obiekt sportowy nie istnieje lub jest nieaktywny' });
     }
 
@@ -103,6 +109,7 @@ const cancel = async (req, res, next) => {
     );
 
     if (reservationResult.rows.length === 0) {
+      apiErrorsTotal.inc({ type: 'not_found' });
       return res.status(404).json({ error: 'Rezerwacja nie została znaleziona' });
     }
 
@@ -116,6 +123,7 @@ const cancel = async (req, res, next) => {
     }
 
     if (reservation.status === 'cancelled') {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({ error: 'Rezerwacja jest już anulowana' });
     }
 
