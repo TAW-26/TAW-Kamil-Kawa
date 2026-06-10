@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const { apiErrorsTotal } = require('../metrics');
 
 const FACILITY_WITH_CATEGORY = `
   SELECT f.*, c.name AS category_name
@@ -37,6 +38,7 @@ const getById = async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
+      apiErrorsTotal.inc({ type: 'not_found' });
       return res.status(404).json({ error: 'Obiekt sportowy nie został znaleziony' });
     }
 
@@ -51,6 +53,7 @@ const create = async (req, res, next) => {
     const { category_id, name, description, location, price_per_hour, image_url } = req.body;
 
     if (!name || price_per_hour === undefined || price_per_hour === null) {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({ error: 'Nazwa i cena za godzinę są wymagane' });
     }
 
@@ -102,6 +105,7 @@ const update = async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
+      apiErrorsTotal.inc({ type: 'not_found' });
       return res.status(404).json({ error: 'Obiekt sportowy nie został znaleziony' });
     }
 
@@ -121,6 +125,7 @@ const remove = async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
+      apiErrorsTotal.inc({ type: 'not_found' });
       return res.status(404).json({ error: 'Obiekt sportowy nie został znaleziony' });
     }
 

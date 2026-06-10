@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db');
+const { apiErrorsTotal } = require('../metrics');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_change_me';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
@@ -30,12 +31,14 @@ const register = async (req, res, next) => {
     const { first_name, last_name, email, password } = req.body;
 
     if (!first_name || !last_name || !email || !password) {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({
         error: 'Wszystkie pola są wymagane: first_name, last_name, email, password',
       });
     }
 
     if (password.length < MIN_PASSWORD_LENGTH) {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({
         error: `Hasło musi mieć co najmniej ${MIN_PASSWORD_LENGTH} znaków`,
       });
@@ -72,6 +75,7 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
+      apiErrorsTotal.inc({ type: 'bad_request' });
       return res.status(400).json({ error: 'Email i hasło są wymagane' });
     }
 
