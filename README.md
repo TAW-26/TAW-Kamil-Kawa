@@ -9,6 +9,7 @@
 * **Backend:** Node.js + Express.js
 * **Baza danych:** PostgreSQL
 * **Autoryzacja:** JSON Web Token (JWT)
+* **Monitoring:** Prometheus + Grafana + prom-client
 * **Testy:** Jest + Supertest
 
 ## Struktura projektu
@@ -23,12 +24,15 @@ TAW-Kamil-Kawa/
 ├── backend/                      # Serwer API
 │   ├── config/                   # Konfiguracja (baza danych)
 │   ├── controllers/              # Logika biznesowa
-│   ├── middleware/               # Middleware (JWT, błędy)
+│   ├── metrics/                  # Definicje metryk Prometheus
+│   ├── middleware/               # Middleware (JWT, błędy, metryki)
 │   ├── routes/                   # Definicje endpointów
 │   ├── scripts/                  # Skrypty pomocnicze
 │   ├── sql/                      # Skrypty SQL
 │   ├── tests/                    # Testy automatyczne
 │   ├── index.js                  # Punkt wejścia serwera
+│   ├── prometheus.yml            # Konfiguracja Prometheusa
+│   ├── grafana-dashboard.json    # Dashboard Grafany
 │   └── package.json              # Zależności backendu
 ├── frontend/                     # Aplikacja React
 │   ├── src/
@@ -56,16 +60,28 @@ TAW-Kamil-Kawa/
 
 ### Administrator (rola: admin)
 - Zarządzanie kategoriami obiektów (dodawanie)
-- Zarządzanie obiektami sportowymi (dodawanie, edycja, dezaktywacja)
+- Zarządzanie obiektami sportowymi (dodawanie, edycja, dezaktywacja, zdjęcie URL)
 - Podgląd wszystkich rezerwacji z filtrowaniem po statusie
+- Potwierdzanie oczekujących rezerwacji
 - Anulowanie dowolnych rezerwacji
 
 ### Statusy rezerwacji
 | Status | Opis |
 |--------|------|
-| **Oczekująca** (pending) | Nowa rezerwacja, czeka na potwierdzenie |
-| **Potwierdzona** (confirmed) | Rezerwacja została potwierdzona |
+| **Oczekująca** (pending) | Nowa rezerwacja, czeka na potwierdzenie przez admina |
+| **Potwierdzona** (confirmed) | Rezerwacja potwierdzona przez administratora |
 | **Anulowana** (cancelled) | Rezerwacja anulowana przez użytkownika lub admina |
+
+### Monitoring (Prometheus + Grafana)
+Aplikacja udostępnia endpoint `/metrics` z metrykami:
+- `http_requests_total` — łączna liczba żądań HTTP (Counter)
+- `http_request_duration_ms` — czas odpowiedzi (Histogram)
+- `active_connections` — aktualnie obsługiwane połączenia (Gauge)
+- `api_errors_total` — błędy API z podziałem na typ (Counter)
+- Domyślne metryki Node.js (CPU, RAM, event loop, GC)
+
+Dashboard Grafany (`backend/grafana-dashboard.json`) zawiera 9 paneli:
+łączne żądania, błędy 4xx/5xx, RAM, uptime, żądania/min, czas odpowiedzi p50/p95, operacje CRUD, aktywne połączenia, błędy API.
 
 Pełny opis: [docs/ui.md](docs/ui.md).
 
@@ -81,6 +97,8 @@ Pełny opis: [docs/ui.md](docs/ui.md).
 ### Wymagania
 * Node.js (v18+)
 * PostgreSQL (v14+) — serwer musi być uruchomiony
+* Prometheus (opcjonalnie, do monitoringu)
+* Grafana (opcjonalnie, do dashboardu)
 
 ### 1. Sklonuj repozytorium
 ```bash
@@ -114,27 +132,39 @@ npm run db:setup:seed
 > **Uwaga:** Serwer przy starcie (`npm start`) automatycznie tworzy tabele, jeśli jeszcze nie istnieją. Skrypt `db:setup` jest potrzebny tylko do pierwszego utworzenia samej bazy danych.
 
 ### 5. Uruchom aplikację
-W jednym terminalu:
+W jednym terminalu (backend):
 ```bash
 cd backend
 npm start
 ```
-W drugim terminalu:
+W drugim terminalu (frontend):
 ```bash
 cd frontend
 npm run dev
 ```
-- **Backend API:** `http://localhost:3000`
+- **Backend API:** `http://localhost:4000`
 - **Frontend:** `http://localhost:5173`
 
-### 6. Konta testowe (po załadowaniu seed)
+### 6. Uruchom monitoring (opcjonalnie)
+
+**Prometheus:**
+```bash
+prometheus.exe --config.file="backend/prometheus.yml"
+```
+- **Prometheus UI:** `http://localhost:9090`
+
+**Grafana** (działa jako serwis Windows):
+- **Grafana UI:** `http://localhost:3000`
+- Import dashboardu: Dashboards → Import → Upload `backend/grafana-dashboard.json`
+
+### 7. Konta testowe (po załadowaniu seed)
 
 | Rola | Email | Hasło |
 |------|-------|-------|
 | **Admin** | kamilkawa200@gmail.com | K@puczino21 |
 | **Użytkownik** | jan@example.com | K@puczino21 |
 
-### 7. Uruchomienie testów
+### 8. Uruchomienie testów
 ```bash
 cd backend
 npm test
@@ -156,9 +186,35 @@ npm test
 | POST | `/api/reservations` | Zalogowany | Utworzenie rezerwacji (status: pending) |
 | GET | `/api/reservations/my` | Zalogowany | Moje rezerwacje |
 | PATCH | `/api/reservations/:id/cancel` | Właściciel/Admin | Anulowanie rezerwacji |
+| PATCH | `/api/reservations/:id/confirm` | Admin | Potwierdzenie rezerwacji |
 | GET | `/api/reservations` | Admin | Wszystkie rezerwacje |
+| GET | `/metrics` | Publiczny | Metryki Prometheus |
 
 Pełna dokumentacja: [docs/api.md](docs/api.md).
+
+## Architektura systemu
+
+```
+┌─────────────┐     HTTP      ┌──────────────────┐     SQL      ┌────────────┐
+│  Frontend   │ ────────────► │    Backend API    │ ───────────► │ PostgreSQL │
+│  React/Vite │ ◄──────────── │  Express.js:4000  │ ◄─────────── │            │
+│  :5173      │     JSON      │                  │              └────────────┘
+└─────────────┘               │  /metrics ────────┼──────┐
+                              └──────────────────┘      │ scrape
+                                                        ▼
+                              ┌──────────────────┐    ┌──────────┐
+                              │     Grafana      │◄───│Prometheus│
+                              │     :3000        │    │  :9090   │
+                              └──────────────────┘    └──────────┘
+```
+
+## Znane ograniczenia
+- Brak uploadu plików — zdjęcia obiektów podawane są jako URL (np. Unsplash)
+- Brak powiadomień e-mail o zmianie statusu rezerwacji
+- Brak paginacji listy obiektów i rezerwacji
+- Brak edycji profilu użytkownika
+- Sesja JWT nie jest unieważniana po wylogowaniu (token wygasa po 24h)
+- Monitoring wymaga ręcznej instalacji Prometheus i Grafana
 
 ## Autor
 **Kamil Kawa** — Projekt na przedmiot TAW (Technologie Aplikacji Webowych)

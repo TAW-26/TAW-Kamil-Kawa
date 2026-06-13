@@ -40,7 +40,7 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 
 **Layout:**
 - **Masthead (Navbar):** ikona SVG logo + serif `RezSport` + mono podtytuł `REZERWACJA OBIEKTÓW SPORTOWYCH`, hairline rule pod całą belką
-- **Hero:** mono eyebrow `Rezerwacja obiektów sportowych`, wielki serif tytuł `Zarezerwuj obiekt sportowy` (z italic akcentem), krótszy podtytuł, dwa buttony: `Przeglądaj obiekty →` (primary) i `Załóż konto` (outline)
+- **Hero:** mono eyebrow `Rezerwacja obiektów sportowych`, wielki serif tytuł `Zarezerwuj obiekt sportowy` (z italic akcentem), krótszy podtytuł, dwa buttony: `Przeglądaj obiekty →` (primary) i `Załóż konto` (outline) — po zalogowaniu przycisk zmienia się na `Moje rezerwacje`
 - **Sekcja kategorii:** lista 2-kolumnowa z numerami `01`, `02` itd., nazwa kategorii (serif) i line-art ikoną po prawej; dotted leader line między nazwą a ikoną; hairline rule między wpisami
 - **Sekcja „Jak zarezerwować obiekt":** 3 kroki z liczbami arabskimi (`1.`, `2.`, `3.`) w DM Serif Display
 - **Stopka:** `RezSport · System rezerwacji obiektów sportowych · {rok} · Autor: K. Kawa`
@@ -119,6 +119,7 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 - **Formularze inline:** underlined inputy, outline buttony hover invert
 - **Status badges:** spójne z `MyReservationsPage`
 - **Filtry rezerwacji:** zakładkowy filtr po statusie (Wszystkie / Potwierdzone / Anulowane / Oczekujące)
+- **Potwierdzanie rezerwacji:** przycisk `Potwierdź` (primary) widoczny tylko przy statusie `Oczekująca`
 
 ---
 
@@ -139,3 +140,9 @@ System wizualny utrzymany jest w stylu **„Almanach Vintage"** — projekt świ
 2. **Error** — `IconAlert` + brick komunikat + button „Spróbuj ponownie"
 3. **Empty** — line-art ikona + przyjazny serif tytuł
 4. **Success** — bottle-green pieczątka komunikatu / poprawne wyświetlenie danych
+
+---
+
+## Monitoring
+
+Aplikacja udostępnia endpoint `/metrics` (port 4000) scrapowany przez Prometheusa. Dashboard Grafany (`backend/grafana-dashboard.json`) zawiera 9 paneli obejmujących ruch HTTP, czasy odpowiedzi, zużycie RAM, uptime, operacje CRUD, aktywne połączenia i błędy API.

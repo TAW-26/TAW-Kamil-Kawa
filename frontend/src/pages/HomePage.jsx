@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { categoriesAPI } from '../api/api';
+import { useAuth } from '../context/useAuth';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Icon from '../icons/Icon';
 import { categoryIconName } from '../icons/categoryIconName';
 import './HomePage.css';
 
 export default function HomePage() {
+  const { user } = useAuth();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,9 +40,15 @@ export default function HomePage() {
               Przeglądaj obiekty
               <Icon name="arrow" size={14} />
             </Link>
-            <Link to="/register" className="btn btn-outline btn-lg">
-              Załóż konto
-            </Link>
+            {user ? (
+              <Link to="/my-reservations" className="btn btn-outline btn-lg">
+                Moje rezerwacje
+              </Link>
+            ) : (
+              <Link to="/register" className="btn btn-outline btn-lg">
+                Załóż konto
+              </Link>
+            )}
           </div>
         </div>
       </section>

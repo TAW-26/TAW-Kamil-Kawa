@@ -49,6 +49,7 @@ export const reservationsAPI = {
   create: (data) => api.post('/reservations', data),
   getMy: () => api.get('/reservations/my'),
   cancel: (id) => api.patch(`/reservations/${id}/cancel`),
+  confirm: (id) => api.patch(`/reservations/${id}/confirm`),
   getAll: (params) => api.get('/reservations', { params }),
 };
 

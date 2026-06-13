@@ -1,7 +1,7 @@
 # RezSport - Dokumentacja API
 
 ## Informacje ogólne
-- **Bazowy URL:** `http://localhost:3000`
+- **Bazowy URL:** `http://localhost:4000`
 - **Format danych:** JSON
 - **Autoryzacja:** Bearer Token (JWT) w nagłówku `Authorization`
 
@@ -277,6 +277,23 @@ System automatycznie:
 
 ---
 
+### PATCH `/api/reservations/:id/confirm` – Potwierdzenie rezerwacji
+**Dostęp:** Admin (Bearer Token)
+
+**Odpowiedź (200):**
+```json
+{
+  "message": "Rezerwacja została potwierdzona",
+  "reservation": { "id": 1, "status": "confirmed", ... }
+}
+```
+
+**Błędy:**
+- `400` – rezerwacja nie ma statusu `pending`
+- `404` – rezerwacja nie istnieje
+
+---
+
 ### GET `/api/reservations` – Wszystkie rezerwacje
 **Dostęp:** Admin
 
@@ -300,3 +317,17 @@ System automatycznie:
 | `404` | Nie znaleziono zasobu |
 | `409` | Konflikt (duplikat lub kolizja terminów) |
 | `500` | Wewnętrzny błąd serwera |
+
+---
+
+## 5. Monitoring
+
+### GET `/metrics` – Metryki Prometheus
+**Dostęp:** Publiczny
+
+Zwraca metryki w formacie tekstowym Prometheus:
+- `http_requests_total` – Counter (łączna liczba żądań HTTP)
+- `http_request_duration_ms` – Histogram (czas odpowiedzi)
+- `active_connections` – Gauge (aktywne połączenia)
+- `api_errors_total` – Counter (błędy API wg typu: `not_found`, `bad_request`)
+- Domyślne metryki Node.js (CPU, RAM, event loop, GC)

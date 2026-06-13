@@ -18,10 +18,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
-// Middleware metryk — MUSI być PRZED routerami!
 app.use(metricsMiddleware);
 
-// Endpoint /metrics dla Prometheusa
 app.get('/metrics', async (_req, res) => {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
