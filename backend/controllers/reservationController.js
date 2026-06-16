@@ -65,7 +65,7 @@ const create = async (req, res, next) => {
 
     const result = await pool.query(
       `INSERT INTO reservations (user_id, facility_id, start_time, end_time, status, total_price)
-       VALUES ($1, $2, $3, $4, 'confirmed', $5)
+       VALUES ($1, $2, $3, $4, 'pending', $5)
        RETURNING *`,
       [userId, facility_id, start_time, end_time, totalPrice]
     );
@@ -177,4 +177,39 @@ const getAll = async (req, res, next) => {
   }
 };
 
-module.exports = { create, getMy, cancel, getAll };
+const confirm = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const reservationResult = await pool.query(
+      'SELECT * FROM reservations WHERE id = $1',
+      [id]
+    );
+
+    if (reservationResult.rows.length === 0) {
+      apiErrorsTotal.inc({ type: 'not_found' });
+      return res.status(404).json({ error: 'Rezerwacja nie została znaleziona' });
+    }
+
+    const reservation = reservationResult.rows[0];
+
+    if (reservation.status !== 'pending') {
+      apiErrorsTotal.inc({ type: 'bad_request' });
+      return res.status(400).json({ error: 'Tylko rezerwacje oczekujące mogą być potwierdzone' });
+    }
+
+    const result = await pool.query(
+      `UPDATE reservations SET status = 'confirmed' WHERE id = $1 RETURNING *`,
+      [id]
+    );
+
+    res.json({
+      message: 'Rezerwacja została potwierdzona',
+      reservation: result.rows[0],
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { create, getMy, cancel, confirm, getAll };

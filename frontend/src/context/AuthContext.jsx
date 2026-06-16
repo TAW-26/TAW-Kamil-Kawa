@@ -26,7 +26,6 @@ function clearSession() {
   localStorage.removeItem(STORAGE_USER_KEY);
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- context value used by useAuth hook
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {

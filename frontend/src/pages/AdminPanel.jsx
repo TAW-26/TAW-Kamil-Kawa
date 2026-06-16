@@ -90,7 +90,7 @@ function FacilitiesTab() {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [form, setForm] = useState({ category_id: '', name: '', description: '', location: '', price_per_hour: '' });
+  const [form, setForm] = useState({ category_id: '', name: '', description: '', location: '', price_per_hour: '', image_url: '' });
   const [submitting, setSubmitting] = useState(false);
 
   const loadFacilities = useCallback(() => {
@@ -108,7 +108,7 @@ function FacilitiesTab() {
   useEffect(() => { loadFacilities(); }, [loadFacilities]);
 
   const resetForm = () => {
-    setForm({ category_id: '', name: '', description: '', location: '', price_per_hour: '' });
+    setForm({ category_id: '', name: '', description: '', location: '', price_per_hour: '', image_url: '' });
     setEditId(null);
     setShowForm(false);
   };
@@ -120,6 +120,7 @@ function FacilitiesTab() {
       description: f.description || '',
       location: f.location || '',
       price_per_hour: f.price_per_hour,
+      image_url: f.image_url || '',
     });
     setEditId(f.id);
     setShowForm(true);
@@ -235,6 +236,18 @@ function FacilitiesTab() {
             />
           </label>
 
+          <label className="form-label">
+            URL zdjęcia
+            <input
+              type="url"
+              className="form-input"
+              name="image_url"
+              placeholder="https://images.unsplash.com/..."
+              value={form.image_url}
+              onChange={handleChange}
+            />
+          </label>
+
           <div className="form-actions">
             <button type="submit" className="btn btn-primary" disabled={submitting}>
               {submitting ? 'Zapis…' : editId ? 'Zapisz zmiany' : 'Dodaj obiekt'}
@@ -260,9 +273,9 @@ function FacilitiesTab() {
               </tr>
             </thead>
             <tbody>
-              {facilities.map((f) => (
+              {facilities.map((f, idx) => (
                 <tr key={f.id}>
-                  <td className="numeric">{String(f.id).padStart(3, '0')}</td>
+                  <td className="numeric">{String(idx + 1).padStart(2, '0')}</td>
                   <td className="admin-table-name">{f.name}</td>
                   <td>{f.category_name || '—'}</td>
                   <td>{f.location || '—'}</td>
@@ -310,6 +323,18 @@ function ReservationsTab() {
       );
     } catch (err) {
       alert(err.response?.data?.error || 'Nie udało się anulować.');
+    }
+  };
+
+  const handleConfirm = async (id) => {
+    if (!window.confirm('Potwierdzić tę rezerwację?')) return;
+    try {
+      await reservationsAPI.confirm(id);
+      setReservations((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status: 'confirmed' } : r))
+      );
+    } catch (err) {
+      alert(err.response?.data?.error || 'Nie udało się potwierdzić.');
     }
   };
 
@@ -378,7 +403,12 @@ function ReservationsTab() {
                       {statusLabel[r.status]}
                     </span>
                   </td>
-                  <td>
+                  <td className="admin-actions-cell">
+                    {r.status === 'pending' && (
+                      <button className="btn btn-primary btn-sm" onClick={() => handleConfirm(r.id)}>
+                        Potwierdź
+                      </button>
+                    )}
                     {r.status !== 'cancelled' && (
                       <button className="btn btn-danger btn-sm" onClick={() => handleCancel(r.id)}>
                         Anuluj
